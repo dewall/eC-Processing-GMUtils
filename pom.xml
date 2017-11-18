@@ -6,6 +6,7 @@
     <version>0.1</version>
     <packaging>pom</packaging>
     
+    
     <name>enviroCar Processing - eC4GeoMesa</name>
     
     <modules>
@@ -14,6 +15,7 @@
     </modules>
     
     <properties>
+        <project.licensePath>etc/LICENSE_HEADER</project.licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -26,6 +28,7 @@
         <okhttp.version>3.9.0</okhttp.version>
         <simple.json.version>1.1.1</simple.json.version>
         <commons.cli.version>1.2</commons.cli.version>
+        <log4j.version>1.2.17</log4j.version>
         
         <scala.abi.version>2.11</scala.abi.version>
         <scala.version>2.11.8</scala.version>
@@ -100,6 +103,11 @@
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
                 <version>${okhttp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
             </dependency>
         
             <!-- Testing libs -->
