@@ -12,8 +12,23 @@
     
     <name>enviroCar Processing - eC4GeoMesa (Core)</name>
     
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.locationtech.geomesa</groupId>
+            <artifactId>geomesa-accumulo-datastore_${scala.abi.version}</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.locationtech.geomesa</groupId>
+            <artifactId>geomesa-accumulo-jobs_${scala.abi.version}</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-epsg-wkt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+        </dependency>
+    </dependencies>
 </project>
