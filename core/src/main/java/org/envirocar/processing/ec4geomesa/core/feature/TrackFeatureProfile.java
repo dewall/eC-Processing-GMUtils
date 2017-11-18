@@ -3,15 +3,17 @@ package org.envirocar.processing.ec4geomesa.core.feature;
 import com.google.common.collect.Lists;
 import java.util.List;
 import org.apache.log4j.Logger;
+import org.envirocar.processing.ec4geomesa.core.model.Track;
 import org.geotools.feature.SchemaException;
 import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  *
  * @author dewall
  */
-public class TrackFeatureProfile extends AbstractFeatureProfile {
+public class TrackFeatureProfile extends AbstractFeatureProfile<Track> {
 
     private static final Logger LOG = Logger.
             getLogger(TrackFeatureProfile.class);
@@ -46,6 +48,11 @@ public class TrackFeatureProfile extends AbstractFeatureProfile {
             LOG.error("Error while creating TrackFeature", ex);
         }
         return null;
+    }
+
+    @Override
+    public SimpleFeature createSimpleFeature(Track t) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

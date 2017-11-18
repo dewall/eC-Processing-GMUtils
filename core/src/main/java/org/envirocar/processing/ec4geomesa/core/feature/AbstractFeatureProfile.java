@@ -7,13 +7,14 @@ import org.apache.log4j.Logger;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataUtilities;
 import org.geotools.feature.SchemaException;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  *
  * @author dewall
  */
-public abstract class AbstractFeatureProfile {
+public abstract class AbstractFeatureProfile<T> {
 
     private static final Logger LOG = Logger.getLogger(
             AbstractFeatureProfile.class);
@@ -44,4 +45,6 @@ public abstract class AbstractFeatureProfile {
     }
 
     public abstract SimpleFeatureType getSimpleFeatureType();
+
+    public abstract SimpleFeature createSimpleFeature(T t);
 }
