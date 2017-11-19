@@ -1,5 +1,6 @@
 package org.envirocar.processing.ec4geomesa.core.model;
 
+import com.vividsolutions.jts.geom.Point;
 import java.util.Date;
 
 /**
@@ -9,25 +10,22 @@ import java.util.Date;
 public class Measurement {
 
     private String id;
-    private Date date;
-
-    private double latitude;
-    private double longitude;
-
+    private Date time;
     private double speed;
     private double rpm;
+    private Point point;
 
     /**
-     * Measurement.
+     * Constructor.
      *
      * @param id
-     * @param latitude
-     * @param longitude
+     * @param point
+     * @param time
      */
-    public Measurement(String id, double latitude, double longitude) {
+    public Measurement(String id, Point point, Date time) {
         this.id = id;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.point = point;
+        this.time = time;
     }
 
     public String getId() {
@@ -39,27 +37,15 @@ public class Measurement {
     }
 
     public Date getDate() {
-        return date;
+        return time;
+    }
+
+    public long getTime() {
+        return time.getTime();
     }
 
     public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+        this.time = date;
     }
 
     public double getSpeed() {
@@ -80,9 +66,8 @@ public class Measurement {
 
     public boolean isValid() {
         return this.id != null
-                && this.date != null
-                && this.longitude != 0.0
-                && this.latitude != 0.0;
+                && this.time != null
+                && this.point != null;
     }
 
 }

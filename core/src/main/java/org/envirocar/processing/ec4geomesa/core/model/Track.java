@@ -2,6 +2,7 @@ package org.envirocar.processing.ec4geomesa.core.model;
 
 import com.vividsolutions.jts.geom.LineString;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,6 +17,9 @@ public class Track {
     private LineString lineString;
     private CarSensor carSensor;
     private List<Measurement> measurements;
+
+    private Date startingTime;
+    private Date endingTime;
 
     /**
      * Constructor.
@@ -67,8 +71,26 @@ public class Track {
         this.measurements.add(measurement);
     }
 
+    public Date getStartingTime() {
+        return startingTime;
+    }
+
+    public void setStartingTime(Date startingTime) {
+        this.startingTime = startingTime;
+    }
+
+    public Date getEndingTime() {
+        return endingTime;
+    }
+
+    public void setEndingTime(Date endingTime) {
+        this.endingTime = endingTime;
+    }
+
     public boolean isValid() {
         return this.id != null
+                && this.endingTime != null
+                && this.startingTime != null
                 && this.carSensor != null
                 && this.lineString != null;
     }
