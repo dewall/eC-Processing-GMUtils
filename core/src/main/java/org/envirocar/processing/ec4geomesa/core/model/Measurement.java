@@ -44,7 +44,7 @@ public class Measurement {
         return time.getTime();
     }
 
-    public void setDate(Date date) {
+    public void setTime(Date date) {
         this.time = date;
     }
 
@@ -62,6 +62,14 @@ public class Measurement {
 
     public void setRpm(double rpm) {
         this.rpm = rpm;
+    }
+
+    public Point getPoint() {
+        return point;
+    }
+
+    public void setPoint(Point point) {
+        this.point = point;
     }
 
     public boolean isValid() {
