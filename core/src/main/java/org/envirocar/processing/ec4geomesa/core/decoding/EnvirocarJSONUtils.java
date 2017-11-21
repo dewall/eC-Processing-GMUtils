@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
-import javafx.scene.text.Text;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.CarSensor;
 import org.envirocar.processing.ec4geomesa.core.model.Measurement;
@@ -40,9 +39,8 @@ public class EnvirocarJSONUtils implements GeoJSONConstants {
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public static final Track parseTrack(Text trackText) throws ParseException {
-        JSONObject track = (JSONObject) JSON_PARSER.parse(
-                trackText.toString());
+    public static final Track parseTrack(String trackText) throws ParseException {
+        JSONObject track = (JSONObject) JSON_PARSER.parse(trackText);
         return parseTrack(track);
     }
 

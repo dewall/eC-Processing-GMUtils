@@ -89,6 +89,7 @@ public class Track {
 
     public boolean isValid() {
         return this.id != null
+                && this.lineString.getNumPoints() > 1
                 && this.endingTime != null
                 && this.startingTime != null
                 && this.carSensor != null
