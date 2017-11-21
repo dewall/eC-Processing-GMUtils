@@ -1,12 +1,21 @@
 package org.envirocar.processing.ec4geomesa.ingestor;
 
 import java.util.Map;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.envirocar.processing.ec4geomesa.core.DataStoreInstanceHandler;
+import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureProfile;
+import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureProfile;
 import org.envirocar.processing.ec4geomesa.ingestor.utils.MRJsonInputFormat;
+import org.geotools.data.DataStore;
 import org.locationtech.geomesa.jobs.interop.mapreduce.GeoMesaOutputFormat;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -17,14 +26,29 @@ import org.opengis.feature.simple.SimpleFeature;
 public class FileDataIngestorMR {
 
     public static void main(String[] args) throws Exception {
-
-//        DataStore dataStore = DataStoreFinder.getDataStore(params);
-//        dataStore.createSchema(t);
-//        runIngestor("");
+        Options options = getCLOptions();
+        CommandLineParser parser = new BasicParser();
+        CommandLine cmd = parser.parse(options, args);
+        String inputDir = cmd.getOptionValue("inputDir");
+        
+        runIngestor(inputDir);
     }
 
-    private static void runIngestor(String inputDir,
-            Map<String, String> dataStoreConfig) throws Exception {
+    private static Options getCLOptions() {
+        return new Options()
+                .addOption(OptionBuilder.withArgName("inputDir")
+                        .hasArg()
+                        .isRequired()
+                        .withDescription("track file on hdfs for ingestion")
+                        .create("inputDir"));
+    }
+
+    private static void runIngestor(String inputDir) throws Exception {
+        DataStoreInstanceHandler datastore = DataStoreInstanceHandler.getDefaultInstance();
+        datastore.createFeatureSchema(new MeasurementFeatureProfile());
+        datastore.createFeatureSchema(new TrackFeatureProfile());
+        
+        Map<String, String> datastoreConfig = datastore.getDatastoreConfig();
         Configuration config = new Configuration();
 
         Job job = Job.getInstance(config);
@@ -41,7 +65,7 @@ public class FileDataIngestorMR {
 
         Path input = new Path(inputDir);
         FileInputFormat.setInputPaths(job, input);
-        GeoMesaOutputFormat.configureDataStore(job, dataStoreConfig);
+        GeoMesaOutputFormat.configureDataStore(job, datastoreConfig);
 
         job.submit();
         if (!job.waitForCompletion(true)) {
