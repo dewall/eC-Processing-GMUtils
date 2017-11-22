@@ -29,7 +29,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.envirocar.processing.ec4geomesa.core.DataStoreInstanceHandler;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureProfile;
 import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureProfile;
-import org.envirocar.processing.ec4geomesa.ingestor.utils.MRJsonInputFormat;
+import org.envirocar.processing.ec4geomesa.ingestor.input.MRJsonInputFormat;
 import org.geotools.data.DataStore;
 import org.locationtech.geomesa.jobs.interop.mapreduce.GeoMesaOutputFormat;
 import org.opengis.feature.simple.SimpleFeature;

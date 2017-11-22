@@ -1,4 +1,4 @@
-package org.envirocar.processing.ec4geomesa.ingestor.utils;
+package org.envirocar.processing.ec4geomesa.ingestor.input;
 
 import java.io.IOException;
 import org.apache.hadoop.fs.Path;
