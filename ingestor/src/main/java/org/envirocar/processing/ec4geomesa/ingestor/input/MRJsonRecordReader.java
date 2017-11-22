@@ -22,7 +22,6 @@ public class MRJsonRecordReader extends RecordReader<LongWritable, Text> {
     private final LineRecordReader reader = new LineRecordReader();
     private final Text currentLine = new Text();
     private final Text currentValue = new Text();
-    private final JSONParser jsonParser = new JSONParser();
 
     @Override
     public void initialize(InputSplit is, TaskAttemptContext tac) throws
