@@ -39,6 +39,20 @@ public class EnvirocarJSONUtils implements GeoJSONConstants {
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
+    public static final List<String> parseTrackIds(String tracksString) throws ParseException {
+        List<String> result = new ArrayList<>();
+        JSONObject parsedDocument = (JSONObject) JSON_PARSER.parse(tracksString);
+        JSONArray tracks = (JSONArray) parsedDocument.get("tracks");
+
+        tracks.forEach((t) -> {
+            JSONObject track = (JSONObject) t;
+            String trackId = (String) track.get(EC_PROPERTIES_ID);
+            result.add(trackId);
+        });
+
+        return result;
+    }
+
     public static final Track parseTrack(String trackText) throws ParseException {
         JSONObject track = (JSONObject) JSON_PARSER.parse(trackText);
         return parseTrack(track);
