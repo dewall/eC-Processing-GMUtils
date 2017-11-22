@@ -34,7 +34,7 @@ public class MRJsonRecordReader extends RecordReader<LongWritable, Text> {
     public boolean nextKeyValue() throws IOException, InterruptedException {
         while (reader.nextKeyValue()) {
             currentValue.clear();
-            currentValue.set(currentLine.toString());
+            currentValue.set(reader.getCurrentValue());
             return true;
         }
         return false;
