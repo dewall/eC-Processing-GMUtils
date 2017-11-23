@@ -5,13 +5,13 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 import java.io.IOException;
-import java.util.logging.Logger;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -39,6 +39,7 @@ public class ECRemoteRecordReader extends RecordReader<LongWritable, Text> {
     public boolean nextKeyValue() throws IOException, InterruptedException {
         if (!processed) {
             String enviroCarURL = textInput.getText();
+            LOG.info("Trying to download track: " + enviroCarURL);
 
             Request request = new Request.Builder()
                     .url(enviroCarURL)
