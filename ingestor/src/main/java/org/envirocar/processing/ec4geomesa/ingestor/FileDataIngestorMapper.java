@@ -2,9 +2,7 @@ package org.envirocar.processing.ec4geomesa.ingestor;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.IOException;
-import java.util.List;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
@@ -12,7 +10,6 @@ import org.envirocar.processing.ec4geomesa.core.DataStoreInstanceHandler;
 import org.envirocar.processing.ec4geomesa.core.decoding.EnvirocarJSONUtils;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureProfile;
 import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureProfile;
-import org.envirocar.processing.ec4geomesa.core.model.Measurement;
 import org.envirocar.processing.ec4geomesa.core.model.Track;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.json.simple.parser.ParseException;
