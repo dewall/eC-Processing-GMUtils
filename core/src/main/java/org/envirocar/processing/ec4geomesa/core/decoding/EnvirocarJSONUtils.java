@@ -90,6 +90,10 @@ public class EnvirocarJSONUtils implements GeoJSONConstants {
         result.setMeasurements(measurements);
         result.setLength(length);
         result.setLineString(lineString);
+        if (measurements.size() >= 2) {
+            result.setStartingTime(measurements.get(0).getDate());
+            result.setEndingTime(measurements.get(measurements.size() - 1).getDate());
+        }
 
         return result;
     }
