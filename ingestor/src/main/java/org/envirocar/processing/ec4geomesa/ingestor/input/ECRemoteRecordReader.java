@@ -49,7 +49,7 @@ public class ECRemoteRecordReader extends RecordReader<LongWritable, Text> {
             ResponseBody body = response.body();
 
             this.currentValue.clear();
-            this.currentValue.set(body.toString());
+            this.currentValue.set(body.string());
 
             processed = true;
             return true;

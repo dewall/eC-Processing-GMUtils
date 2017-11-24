@@ -42,9 +42,12 @@ public class ECRemoteInputFormat extends InputFormat<LongWritable, Text> {
         try {
             List<String> trackIds = EnvirocarJSONUtils.parseTrackIds(body.string());
 
-            return trackIds.stream()
+            List<InputSplit> collect = trackIds.stream()
                     .map(t -> new TextInputSplit(ENVIROCAR_TRACKS_URL + "/" + t))
                     .collect(Collectors.toList());
+            
+            System.out.println(collect.size());
+            return collect;
         } catch (ParseException ex) {
             LOG.error("Error while defining eC inputsplits", ex);
         }

@@ -1,15 +1,25 @@
 package org.envirocar.processing.ec4geomesa.ingestor.input;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
+import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.InputSplit;
 
 /**
  *
  * @author dewall
  */
-public class TextInputSplit extends InputSplit {
+public class TextInputSplit extends InputSplit implements Writable {
 
     private String text;
+
+    /**
+     * Constructor.
+     */
+    public TextInputSplit() {
+        this(null);
+    }
 
     /**
      * Constructor.
@@ -31,7 +41,17 @@ public class TextInputSplit extends InputSplit {
 
     @Override
     public String[] getLocations() throws IOException, InterruptedException {
-        return null;
+        return new String[0];
+    }
+
+    @Override
+    public void write(DataOutput d) throws IOException {
+        d.writeUTF(text);
+    }
+
+    @Override
+    public void readFields(DataInput di) throws IOException {
+        this.text = di.readUTF();
     }
 
 }
