@@ -34,5 +34,14 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
-    </dependencies>
+    </dependencies> 
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
