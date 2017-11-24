@@ -35,7 +35,7 @@ public class DataStoreInstanceHandler {
     private static final String KEY_TABLE_NAME = "tableName";
 
     private static final String DEFAULT_INSTANCE_ID = "accumulo";
-    private static final String DEFAULT_ZOOKEEPERS = "zookeepers";
+    private static final String DEFAULT_ZOOKEEPERS = "zookeeper";
     private static final String DEFAULT_USER = "root";
     private static final String DEFAULT_PASSWORD = "GisPwd";
     private static final String DEFAULT_TABLE_NAME = "envirocar";

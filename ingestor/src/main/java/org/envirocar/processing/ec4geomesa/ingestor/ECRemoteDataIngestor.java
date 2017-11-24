@@ -14,7 +14,6 @@ import org.envirocar.processing.ec4geomesa.core.DataStoreInstanceHandler;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureProfile;
 import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureProfile;
 import org.envirocar.processing.ec4geomesa.ingestor.input.ECRemoteInputFormat;
-import org.envirocar.processing.ec4geomesa.ingestor.input.MRJsonInputFormat;
 import org.locationtech.geomesa.jobs.interop.mapreduce.GeoMesaOutputFormat;
 import org.opengis.feature.simple.SimpleFeature;
 

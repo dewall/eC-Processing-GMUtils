@@ -1,12 +1,16 @@
 package org.envirocar.processing.ec4geomesa.core.feature;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.common.base.Joiner;
 import com.vividsolutions.jts.geom.Point;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.Measurement;
+import org.geotools.data.DataUtilities;
+import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
 import org.opengis.feature.simple.SimpleFeature;
@@ -39,17 +43,15 @@ public class MeasurementFeatureProfile extends AbstractFeatureProfile<Measuremen
 
     @Override
     public SimpleFeatureType createSimpleFeatureType() {
-        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-        builder.add("MEASUREMENT_ID", String.class);
-        builder.add("TRACK_ID", String.class);
-        builder.add("TIME", Date.class);
-        builder.add("PHEN", Collection.class);
-        builder.add("geom", Point.class, "4326");
-        builder.setDefaultGeometry("geom");
+        try {
+            String spec = Joiner.on(",").join(FEATURE_ATTRIBUTES);
+            this.featureType = DataUtilities.createType(TABLE_NAME, spec);
+            this.featureType.getUserData().put(
+                    SimpleFeatureTypes.DEFAULT_DATE_KEY, "TIME");
+        } catch (SchemaException ex) {
+            LOG.error(ex);
+        }
 
-        SimpleFeatureType featureType = builder.buildFeatureType();
-        featureType.getUserData().put(
-                SimpleFeatureTypes.DEFAULT_DATE_KEY, "TIME");
         return featureType;
 //        try {
 //            SimpleFeatureType featureType = createSimpleFeatureType(

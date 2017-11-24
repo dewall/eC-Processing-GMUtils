@@ -19,6 +19,7 @@ public class ECRemoteDataIngestorMapper extends Mapper<LongWritable, Text, Text,
     
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        System.out.println(value);
         super.map(key, value, context); //To change body of generated methods, choose Tools | Templates.
     }
 
