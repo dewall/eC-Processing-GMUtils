@@ -53,49 +53,58 @@ public class EnvirocarJSONUtils implements GeoJSONConstants {
         return result;
     }
 
-    public static final Track parseTrack(String trackText) throws ParseException {
-        JSONObject track = (JSONObject) JSON_PARSER.parse(trackText);
-        return parseTrack(track);
+    public static final Track parseTrack(String trackText) throws ParseException, Exception {
+        try {
+            JSONObject track = (JSONObject) JSON_PARSER.parse(trackText);
+            return parseTrack(track);
+        } catch (Exception e) {
+            throw new Exception(String.format("Error while parsing Track. Parsed Track is empty -> [%s]", trackText));
+        }
     }
 
-    public static final Track parseTrack(JSONObject track) {
+    public static final Track parseTrack(JSONObject track) throws Exception {
+        try {
 
-        JSONObject properties = (JSONObject) track.get(KEY_PROPERTIES);
-        JSONArray features = (JSONArray) track.get(KEY_FEATURES);
+            JSONObject properties = (JSONObject) track.get(KEY_PROPERTIES);
+            JSONArray features = (JSONArray) track.get(KEY_FEATURES);
 
-        // parse properties
-        String trackID = (String) properties.get(EC_PROPERTIES_ID);
-        double length = readAsDouble(EC_PROPERTIES_LENGTH, properties);
+            // parse properties
+            String trackID = (String) properties.get(EC_PROPERTIES_ID);
+            double length = readAsDouble(EC_PROPERTIES_LENGTH, properties);
 
-        // parse carsensor
-        JSONObject carSensorJson = (JSONObject) properties.get(
-                EC_PROPERTIES_SENSOR);
-        CarSensor carSensor = readCarSensor(carSensorJson);
+            // parse carsensor
+            JSONObject carSensorJson = (JSONObject) properties.get(
+                    EC_PROPERTIES_SENSOR);
+            CarSensor carSensor = readCarSensor(carSensorJson);
 
-        // parse features        
-        List<Measurement> measurements = readMeasurements(features);
+            // parse features        
+            List<Measurement> measurements = readMeasurements(trackID, features);
 
-        LineString lineString = measurements.stream()
-                .map(t -> t.getPoint().getCoordinate())
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toList(),
-                        list -> {
-                            Coordinate[] coords = list.toArray(
-                                    new Coordinate[list.size()]);
-                            return GEOMETRY_FACOTRY.createLineString(coords);
-                        }));
+            LineString lineString = measurements.stream()
+                    .map(t -> t.getPoint().getCoordinate())
+                    .collect(Collectors.collectingAndThen(
+                            Collectors.toList(),
+                            list -> {
+                                Coordinate[] coords = list.toArray(
+                                        new Coordinate[list.size()]);
+                                return GEOMETRY_FACOTRY.createLineString(coords);
+                            }));
 
-        Track result = new Track(trackID);
-        result.setCarSensor(carSensor);
-        result.setMeasurements(measurements);
-        result.setLength(length);
-        result.setLineString(lineString);
-        if (measurements.size() >= 2) {
-            result.setStartingTime(measurements.get(0).getDate());
-            result.setEndingTime(measurements.get(measurements.size() - 1).getDate());
+            Track result = new Track(trackID);
+            result.setCarSensor(carSensor);
+            result.setMeasurements(measurements);
+            result.setLength(length);
+            result.setLineString(lineString);
+            if (measurements.size() >= 2) {
+                result.setStartingTime(measurements.get(0).getTime());
+                result.setEndingTime(measurements.get(measurements.size() - 1).getTime());
+            }
+
+            return result;
+        } catch (Exception e) {
+            LOG.error("Error while parsing track", e);
+            throw new Exception("Unable to parse track", e);
         }
-
-        return result;
     }
 
     public static CarSensor readCarSensor(JSONObject sensorJson) {
@@ -117,7 +126,7 @@ public class EnvirocarJSONUtils implements GeoJSONConstants {
         return result;
     }
 
-    private static List<Measurement> readMeasurements(
+    private static List<Measurement> readMeasurements(String trackID,
             JSONArray featureJson) {
         List<Measurement> measurements = new ArrayList<>();
 
@@ -147,7 +156,8 @@ public class EnvirocarJSONUtils implements GeoJSONConstants {
                 LOG.error("Error while parsing date value.", ex);
             }
 
-            Measurement m = new Measurement(id, point, time);
+            Measurement m = new Measurement(id, trackID, point, time);
+            // TODO add phenomenon parsing
             measurements.add(m);
         });
 
