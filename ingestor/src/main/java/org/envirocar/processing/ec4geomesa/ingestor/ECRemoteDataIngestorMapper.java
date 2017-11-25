@@ -2,6 +2,7 @@ package org.envirocar.processing.ec4geomesa.ingestor;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.IOException;
+import java.util.logging.Level;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -19,9 +20,9 @@ import org.opengis.feature.simple.SimpleFeature;
  *
  * @author dewall
  */
-public class ECRemoteDataIngestorMapper extends Mapper<LongWritable, Text, Text, SimpleFeature>{
+public class ECRemoteDataIngestorMapper extends Mapper<LongWritable, Text, Text, SimpleFeature> {
 
-   private static final Logger LOG = Logger.getLogger(ECRemoteDataIngestorMapper.class);
+    private static final Logger LOG = Logger.getLogger(ECRemoteDataIngestorMapper.class);
 
     private DataStoreInstanceHandler datastore;
     private GeometryFactory geometryFactory;
@@ -63,6 +64,8 @@ public class ECRemoteDataIngestorMapper extends Mapper<LongWritable, Text, Text,
                 LOG.error(String.format("Track %s is not valid.", track.getId()));
             }
         } catch (ParseException ex) {
+            LOG.error("Error while ingesting track: " + value.toString(), ex);
+        } catch (Exception ex) {
             LOG.error("Error while ingesting track: " + value.toString(), ex);
         }
 
