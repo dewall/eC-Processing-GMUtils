@@ -9,21 +9,25 @@ import java.util.Date;
  */
 public class Measurement {
 
-    private String id;
+    private final String id;
+    private final String trackId;
+    private final Point point;
+
     private Date time;
     private double speed;
     private double rpm;
-    private Point point;
 
     /**
      * Constructor.
      *
      * @param id
+     * @param trackId
      * @param point
      * @param time
      */
-    public Measurement(String id, Point point, Date time) {
+    public Measurement(String id, String trackId, Point point, Date time) {
         this.id = id;
+        this.trackId = trackId;
         this.point = point;
         this.time = time;
     }
@@ -32,15 +36,15 @@ public class Measurement {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getTrackId() {
+        return trackId;
     }
 
-    public Date getDate() {
+    public Date getTime() {
         return time;
     }
 
-    public long getTime() {
+    public long getTimeAsLong() {
         return time.getTime();
     }
 
@@ -68,14 +72,21 @@ public class Measurement {
         return point;
     }
 
-    public void setPoint(Point point) {
-        this.point = point;
-    }
-
     public boolean isValid() {
         return this.id != null
                 && this.time != null
                 && this.point != null;
     }
 
+    @Override
+    public String toString() {
+        return "Measurement{" + "id=" + id 
+                + ", trackId=" + trackId 
+                + ", point=" + point 
+                + ", time=" + time 
+                + ", speed=" + speed 
+                + ", rpm=" + rpm + '}';
+    }
+
+    
 }
