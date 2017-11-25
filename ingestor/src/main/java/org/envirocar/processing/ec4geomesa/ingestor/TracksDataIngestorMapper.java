@@ -20,9 +20,9 @@ import org.opengis.feature.simple.SimpleFeature;
  *
  * @author dewall
  */
-public class ECRemoteDataIngestorMapper extends Mapper<LongWritable, Text, Text, SimpleFeature> {
+public class TracksDataIngestorMapper extends Mapper<LongWritable, Text, Text, SimpleFeature> {
 
-    private static final Logger LOG = Logger.getLogger(ECRemoteDataIngestorMapper.class);
+    private static final Logger LOG = Logger.getLogger(TracksDataIngestorMapper.class);
 
     private DataStoreInstanceHandler datastore;
     private GeometryFactory geometryFactory;
@@ -60,7 +60,6 @@ public class ECRemoteDataIngestorMapper extends Mapper<LongWritable, Text, Text,
                             }
                         });
             } else {
-                LOG.error(track.toString());
                 LOG.error(String.format("Track %s is not valid.", track.getId()));
             }
         } catch (ParseException ex) {

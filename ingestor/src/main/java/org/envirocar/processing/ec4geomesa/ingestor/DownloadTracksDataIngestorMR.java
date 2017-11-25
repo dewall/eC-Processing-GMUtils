@@ -21,7 +21,7 @@ import org.opengis.feature.simple.SimpleFeature;
  *
  * @author dewall
  */
-public class ECRemoteDataIngestor {
+public class DownloadTracksDataIngestorMR {
 
     public static void main(String[] args) throws Exception {
         Options options = getCLOptions();
@@ -51,9 +51,9 @@ public class ECRemoteDataIngestor {
 
         Job job = Job.getInstance(config);
         job.setJobName("GeoMesa enviroCar Ingestion");
-        job.setJarByClass(ECRemoteDataIngestor.class);
+        job.setJarByClass(DownloadTracksDataIngestorMR.class);
 
-        job.setMapperClass(ECRemoteDataIngestorMapper.class);
+        job.setMapperClass(TracksDataIngestorMapper.class);
         job.setInputFormatClass(ECRemoteInputFormat.class);
         job.setOutputFormatClass(GeoMesaOutputFormat.class);
 
