@@ -95,4 +95,16 @@ public class Track {
                 && this.carSensor != null
                 && this.lineString != null;
     }
+
+    @Override
+    public String toString() {
+        return "Track{" + "id=" + id
+                + ", length=" + length
+                + ", lineString=" + lineString
+                + ", carSensor=" + carSensor
+                + ", measurementsCount=" + measurements.size()
+                + ", startingTime=" + startingTime
+                + ", endingTime=" + endingTime + '}';
+    }
+
 }
