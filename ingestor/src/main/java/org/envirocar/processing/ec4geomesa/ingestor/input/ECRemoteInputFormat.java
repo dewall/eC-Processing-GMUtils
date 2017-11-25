@@ -26,7 +26,7 @@ public class ECRemoteInputFormat extends InputFormat<LongWritable, Text> {
 
     private static final Logger LOG = Logger.getLogger(ECRemoteInputFormat.class);
 
-    private static final String ENVIROCAR_TRACKS_URL = "http://envirocar.org/api/stable/tracks";
+    private static final String ENVIROCAR_TRACKS_URL = "http://envirocar.org/api/stable/tracks?limit=1000";
 
     private final OkHttpClient client = new OkHttpClient();
 
