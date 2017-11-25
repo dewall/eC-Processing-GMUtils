@@ -26,14 +26,14 @@ public class ECRemoteInputFormat extends InputFormat<LongWritable, Text> {
 
     private static final Logger LOG = Logger.getLogger(ECRemoteInputFormat.class);
 
-    private static final String ENVIROCAR_TRACKS_URL = "http://envirocar.org/api/stable/tracks?limit=1000";
+    private static final String ENVIROCAR_TRACKS_URL = "http://envirocar.org/api/stable/tracks";
 
     private final OkHttpClient client = new OkHttpClient();
 
     @Override
     public List<InputSplit> getSplits(JobContext jc) throws IOException, InterruptedException {
         Request request = new Request.Builder()
-                .url(ENVIROCAR_TRACKS_URL)
+                .url(ENVIROCAR_TRACKS_URL + "?limit=1000")
                 .build();
 
         Response response = client.newCall(request).execute();
