@@ -23,9 +23,9 @@ import org.json.simple.parser.ParseException;
  *
  * @author dewall
  */
-public class ECRemoteInputFormat extends InputFormat<LongWritable, Text> {
+public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
 
-    private static final Logger LOG = Logger.getLogger(ECRemoteInputFormat.class);
+    private static final Logger LOG = Logger.getLogger(DownloadTracksInputFormat.class);
 
     private static final String ENVIROCAR_TRACKS_URL = "http://envirocar.org/api/stable/tracks";
 
@@ -61,7 +61,7 @@ public class ECRemoteInputFormat extends InputFormat<LongWritable, Text> {
     @Override
     public RecordReader<LongWritable, Text> createRecordReader(InputSplit is, TaskAttemptContext tac) throws IOException,
             InterruptedException {
-        return new ECRemoteRecordReader();
+        return new DownloadTracksRecordReader();
     }
 
 }

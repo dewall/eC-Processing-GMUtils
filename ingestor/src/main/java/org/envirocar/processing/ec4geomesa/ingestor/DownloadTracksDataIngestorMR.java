@@ -13,7 +13,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.envirocar.processing.ec4geomesa.core.DataStoreInstanceHandler;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureProfile;
 import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureProfile;
-import org.envirocar.processing.ec4geomesa.ingestor.input.ECRemoteInputFormat;
+import org.envirocar.processing.ec4geomesa.ingestor.input.DownloadTracksInputFormat;
 import org.locationtech.geomesa.jobs.interop.mapreduce.GeoMesaOutputFormat;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -62,7 +62,7 @@ public class DownloadTracksDataIngestorMR {
         job.setJarByClass(DownloadTracksDataIngestorMR.class);
 
         job.setMapperClass(TracksDataIngestorMapper.class);
-        job.setInputFormatClass(ECRemoteInputFormat.class);
+        job.setInputFormatClass(DownloadTracksInputFormat.class);
         job.setOutputFormatClass(GeoMesaOutputFormat.class);
 
         job.setMapOutputKeyClass(Text.class);
