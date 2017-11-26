@@ -16,6 +16,7 @@ import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.decoding.EnvirocarJSONUtils;
+import org.envirocar.processing.ec4geomesa.ingestor.DownloadTracksDataIngestorMR;
 import org.json.simple.parser.ParseException;
 
 /**
@@ -32,8 +33,11 @@ public class ECRemoteInputFormat extends InputFormat<LongWritable, Text> {
 
     @Override
     public List<InputSplit> getSplits(JobContext jc) throws IOException, InterruptedException {
+        int limit = jc.getConfiguration().getInt(DownloadTracksDataIngestorMR.OPTION_LIMIT,
+                DownloadTracksDataIngestorMR.OPTION_LIMIT_DEFAULT);
+
         Request request = new Request.Builder()
-                .url(ENVIROCAR_TRACKS_URL + "?limit=1000")
+                .url(ENVIROCAR_TRACKS_URL + "?limit=" + limit)
                 .build();
 
         Response response = client.newCall(request).execute();
@@ -45,7 +49,7 @@ public class ECRemoteInputFormat extends InputFormat<LongWritable, Text> {
             List<InputSplit> collect = trackIds.stream()
                     .map(t -> new TextInputSplit(ENVIROCAR_TRACKS_URL + "/" + t))
                     .collect(Collectors.toList());
-            
+
             System.out.println(collect.size());
             return collect;
         } catch (ParseException ex) {

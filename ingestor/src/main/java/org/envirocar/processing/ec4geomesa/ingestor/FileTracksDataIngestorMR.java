@@ -15,7 +15,6 @@ import org.envirocar.processing.ec4geomesa.core.DataStoreInstanceHandler;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureProfile;
 import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureProfile;
 import org.envirocar.processing.ec4geomesa.ingestor.input.MRJsonInputFormat;
-import org.geotools.data.DataStore;
 import org.locationtech.geomesa.jobs.interop.mapreduce.GeoMesaOutputFormat;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -30,7 +29,7 @@ public class FileTracksDataIngestorMR {
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(options, args);
         String inputDir = cmd.getOptionValue("inputDir");
-        
+
         runIngestor(inputDir);
     }
 
@@ -47,7 +46,7 @@ public class FileTracksDataIngestorMR {
         DataStoreInstanceHandler datastore = DataStoreInstanceHandler.getDefaultInstance();
         datastore.createFeatureSchema(new MeasurementFeatureProfile());
         datastore.createFeatureSchema(new TrackFeatureProfile());
-        
+
         Map<String, String> datastoreConfig = datastore.getDatastoreConfig();
         Configuration config = new Configuration();
 
