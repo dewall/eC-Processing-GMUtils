@@ -17,10 +17,9 @@ import org.apache.log4j.Logger;
  *
  * @author dewall
  */
-public class ECRemoteRecordReader extends RecordReader<LongWritable, Text> {
+public class DownloadTracksRecordReader extends RecordReader<LongWritable, Text> {
 
-    private static final Logger LOG = Logger.getLogger(
-            ECRemoteRecordReader.class.getName());
+    private static final Logger LOG = Logger.getLogger(DownloadTracksRecordReader.class.getName());
 
     private final Text currentValue = new Text();
     private final OkHttpClient client = new OkHttpClient();
