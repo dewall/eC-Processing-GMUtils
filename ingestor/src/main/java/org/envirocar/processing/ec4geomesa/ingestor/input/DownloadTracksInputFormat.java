@@ -35,6 +35,7 @@ public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
     public List<InputSplit> getSplits(JobContext jc) throws IOException, InterruptedException {
         int limit = jc.getConfiguration().getInt(DownloadTracksDataIngestorMR.OPTION_LIMIT,
                 DownloadTracksDataIngestorMR.OPTION_LIMIT_DEFAULT);
+        LOG.info(String.format("Getting splits for the latest %s tracks.", "" + limit));
 
         Request request = new Request.Builder()
                 .url(ENVIROCAR_TRACKS_URL + "?limit=" + limit)
@@ -50,7 +51,6 @@ public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
                     .map(t -> new TextInputSplit(ENVIROCAR_TRACKS_URL + "/" + t))
                     .collect(Collectors.toList());
 
-            System.out.println(collect.size());
             return collect;
         } catch (ParseException ex) {
             LOG.error("Error while defining eC inputsplits", ex);

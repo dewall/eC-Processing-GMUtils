@@ -24,7 +24,7 @@ public class DownloadTracksRecordReader extends RecordReader<LongWritable, Text>
     private final Text currentValue = new Text();
     private final OkHttpClient client = new OkHttpClient();
 
-    private boolean processed = false;
+    private boolean downloaded = false;
     private TextInputSplit textInput;
     private Configuration config;
 
@@ -36,7 +36,7 @@ public class DownloadTracksRecordReader extends RecordReader<LongWritable, Text>
 
     @Override
     public boolean nextKeyValue() throws IOException, InterruptedException {
-        if (!processed) {
+        if (!downloaded) {
             String enviroCarURL = textInput.getText();
             LOG.info("Trying to download track: " + enviroCarURL);
 
@@ -50,7 +50,8 @@ public class DownloadTracksRecordReader extends RecordReader<LongWritable, Text>
             this.currentValue.clear();
             this.currentValue.set(body.string());
 
-            processed = true;
+            downloaded = true;
+            LOG.info("Track successfully downloaded");
             return true;
         }
         return false;
@@ -68,7 +69,7 @@ public class DownloadTracksRecordReader extends RecordReader<LongWritable, Text>
 
     @Override
     public float getProgress() throws IOException, InterruptedException {
-        return processed ? 1.0f : 0.0f;
+        return downloaded ? 1.0f : 0.0f;
     }
 
     @Override
