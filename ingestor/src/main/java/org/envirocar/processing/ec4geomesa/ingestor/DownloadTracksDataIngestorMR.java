@@ -23,31 +23,39 @@ import org.opengis.feature.simple.SimpleFeature;
  */
 public class DownloadTracksDataIngestorMR {
 
+    public static final String OPTION_LIMIT = "limit";
+    public static final int OPTION_LIMIT_DEFAULT = 100;
+
     public static void main(String[] args) throws Exception {
         Options options = getCLOptions();
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(options, args);
-        String limit = cmd.getOptionValue("limit");
+        int limit = getLimitOptionValue(cmd);
 
         runIngestor(limit);
     }
 
     private static Options getCLOptions() {
         return new Options()
-                .addOption(OptionBuilder.withArgName("limit")
+                .addOption(OptionBuilder.withArgName(OPTION_LIMIT)
                         .hasArg()
                         .withDescription("number of tracks to ingest")
                         .create("limit"));
     }
 
-    private static void runIngestor(String numberOfRecords) throws IOException, InterruptedException, Exception {
+    private static int getLimitOptionValue(CommandLine cmd) {
+        String limitValue = cmd.getOptionValue(OPTION_LIMIT);
+        return limitValue != null ? Integer.parseInt(limitValue) : OPTION_LIMIT_DEFAULT;
+    }
+
+    private static void runIngestor(int limit) throws IOException, InterruptedException, Exception {
         DataStoreInstanceHandler datastore = DataStoreInstanceHandler.getDefaultInstance();
         datastore.createFeatureSchema(new MeasurementFeatureProfile());
         datastore.createFeatureSchema(new TrackFeatureProfile());
 
         Map<String, String> datastoreConfig = datastore.getDatastoreConfig();
         Configuration config = new Configuration();
-        config.set("limit", numberOfRecords);
+        config.setInt(OPTION_LIMIT, limit);
 
         Job job = Job.getInstance(config);
         job.setJobName("GeoMesa enviroCar Ingestion");
