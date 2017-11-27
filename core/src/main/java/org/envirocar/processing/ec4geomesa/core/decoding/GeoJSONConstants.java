@@ -21,4 +21,7 @@ public interface GeoJSONConstants {
     String EC_SENSOR_ENGINEDIS = "engineDisplacement";
     String EC_SENSOR_CONSTYEAR = "constructionYear";
     String EC_SENSOR_MANUFACTURER = "manufacturer";
+
+    String EC_PHENOMENON_VALUE = "value";
+    String EC_PHENOMENON_UNIT = "unit";
 }

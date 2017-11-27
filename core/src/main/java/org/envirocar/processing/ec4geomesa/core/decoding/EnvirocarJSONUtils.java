@@ -65,7 +65,6 @@ public class EnvirocarJSONUtils implements GeoJSONConstants {
 
     public static final Track parseTrack(JSONObject track) throws Exception {
         try {
-
             JSONObject properties = (JSONObject) track.get(KEY_PROPERTIES);
             // parse properties
             String trackID = (String) properties.get(EC_PROPERTIES_ID);
@@ -166,6 +165,19 @@ public class EnvirocarJSONUtils implements GeoJSONConstants {
         });
 
         return measurements;
+    }
+
+    private static List<?> parsePhenomenons(JSONArray phenomenonsJson) {
+
+        phenomenonsJson
+                .stream()
+                .map(p -> {
+                    JSONObject phenomenon = (JSONObject) p;
+                    double phenomenonValue = readAsDouble(EC_PHENOMENON_VALUE, phenomenon);
+                    double phenomenonUnit = readAsDouble(EC_PHENOMENON_UNIT, phenomenon);
+                    // TODO Continue here 
+                    return null;
+                });
     }
 
     private static final double readAsDouble(String key, JSONObject json) {
