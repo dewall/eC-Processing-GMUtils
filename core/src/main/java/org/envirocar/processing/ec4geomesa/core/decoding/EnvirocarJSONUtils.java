@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
+import org.envirocar.processing.ec4geomesa.core.exception.InvalidMeasurementNumberException;
 import org.envirocar.processing.ec4geomesa.core.model.CarSensor;
 import org.envirocar.processing.ec4geomesa.core.model.Measurement;
 import org.envirocar.processing.ec4geomesa.core.model.Track;
@@ -66,11 +67,15 @@ public class EnvirocarJSONUtils implements GeoJSONConstants {
         try {
 
             JSONObject properties = (JSONObject) track.get(KEY_PROPERTIES);
-            JSONArray features = (JSONArray) track.get(KEY_FEATURES);
-
             // parse properties
             String trackID = (String) properties.get(EC_PROPERTIES_ID);
             double length = readAsDouble(EC_PROPERTIES_LENGTH, properties);
+
+            JSONArray features = (JSONArray) track.get(KEY_FEATURES);
+            if (features.size() <= 1) {
+                throw new InvalidMeasurementNumberException(String.format(
+                        "Track [%s] has an invalid number of Measurements", trackID));
+            }
 
             // parse carsensor
             JSONObject carSensorJson = (JSONObject) properties.get(
@@ -101,8 +106,7 @@ public class EnvirocarJSONUtils implements GeoJSONConstants {
             }
 
             return result;
-        } catch (Exception e) {
-            LOG.error("Error while parsing track", e);
+        } catch (IllegalArgumentException e) {
             throw new Exception("Unable to parse track", e);
         }
     }
