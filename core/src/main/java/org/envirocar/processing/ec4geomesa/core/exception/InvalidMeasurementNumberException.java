@@ -6,11 +6,17 @@ package org.envirocar.processing.ec4geomesa.core.exception;
  */
 public class InvalidMeasurementNumberException extends Exception {
 
+    /**
+     * Constructor.
+     *
+     * @param message
+     */
     public InvalidMeasurementNumberException(String message) {
         super(message);
     }
 
     /**
+     * Constructor.
      *
      * @param message
      * @param throwable
