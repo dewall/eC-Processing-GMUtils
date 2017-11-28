@@ -2,6 +2,7 @@ package org.envirocar.processing.ec4geomesa.core.feature;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Joiner;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.Measurement;
@@ -21,12 +22,64 @@ public class MeasurementFeatureProfile extends AbstractFeatureProfile<Measuremen
             MeasurementFeatureProfile.class);
 
     private static final String TABLE_NAME = "measurements";
+
+    private static final List<String> PHENOMENONS = Arrays.asList(
+            "CO2",
+            "Calculated MAF",
+            "Consumption",
+            "Engine Load",
+            "Fuel System Loop",
+            "Fuel System Status Code",
+            "GPS Accuracy",
+            "GPS Altitude",
+            "GPS Bearing",
+            "GPS HDOP",
+            "GPS PDOP",
+            "GPS Speed",
+            "GPS VDOP",
+            "Intake Pressure",
+            "Intake Temperature",
+            "Long-Term Fuel Trim 1",
+            "MAF",
+            "O2 Lambda Current",
+            "O2 Lambda Current ER",
+            "O2 Lambda Voltage",
+            "O2 Lambda Voltage ER",
+            "Rpm",
+            "Short-Term Fuel Trim 1",
+            "Speed",
+            "Throttle Position");
+
     private static final List<String> FEATURE_ATTRIBUTES = Lists.newArrayList(
             "MeasurementID:String",
             "TrackID:String",
             "Time:Date",
-            "Speed:Integer",
-            "*geom:Point:srid=4326"
+            "*geom:Point:srid=4326",
+            "CO2:Double",
+            "Calculated MAF:Double",
+            "Consumption:Double",
+            "Engine Load:Double",
+            "Fuel System Loop:Double",
+            "Fuel System Status Code:Double",
+            "GPS Accuracy:Double",
+            "GPS Altitude:Double",
+            "GPS Bearing:Double",
+            "GPS HDOP:Double",
+            "GPS PDOP:Double",
+            "GPS Speed:Double",
+            "GPS VDOP:Double",
+            "Intake Pressure:Double",
+            "Intake Temperature:Double",
+            "Long-Term Fuel Trim 1:Double",
+            "MAF:Double",
+            "O2 Lambda Current:Double",
+            "O2 Lambda Current ER:Double",
+            "O2 Lambda Voltage:Double",
+            "O2 Lambda Voltage ER:Double",
+            "Rpm:Double",
+            "Short-Term Fuel Trim 1:Double",
+            "Speed:Double",
+            "Throttle Position:Double"
     );
 
     /**
@@ -62,9 +115,8 @@ public class MeasurementFeatureProfile extends AbstractFeatureProfile<Measuremen
         sf.setAttribute("TrackID", t.getTrackId());
         sf.setAttribute("Time", t.getTime());
         sf.setDefaultGeometry(t.getPoint());
-        
+
         // TODO Phenomenons.
-        
         return sf;
     }
 

@@ -7,8 +7,11 @@ import com.vividsolutions.jts.geom.Point;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
@@ -26,7 +29,7 @@ import org.json.simple.parser.ParseException;
  *
  * @author dewall
  */
-public class EnvirocarJSONUtils implements GeoJSONConstants {
+public class EnvirocarJSONUtils implements JSONConstants {
 
     private static final Logger LOG = Logger.getLogger(EnvirocarJSONUtils.class);
 
@@ -134,7 +137,7 @@ public class EnvirocarJSONUtils implements GeoJSONConstants {
         List<Measurement> measurements = new ArrayList<>();
 
         // Parse measurements
-        featureJson.forEach((f) -> {
+        featureJson.forEach((Object f) -> {
             JSONObject feature = (JSONObject) f;
 
             // Get the geometry
@@ -159,25 +162,28 @@ public class EnvirocarJSONUtils implements GeoJSONConstants {
                 LOG.error("Error while parsing date value.", ex);
             }
 
+            JSONObject phenomenonsJson = (JSONObject) properties.get(EC_PHENOMENONS);
+            Map<String, Double> phenomenons = parsePhenomenons(phenomenonsJson);
+
             Measurement m = new Measurement(id, trackID, point, time);
-            // TODO add phenomenon parsing
+            m.setPhenomenons(phenomenons);
             measurements.add(m);
         });
 
         return measurements;
     }
 
-    private static List<?> parsePhenomenons(JSONArray phenomenonsJson) {
+    private static Map<String, Double> parsePhenomenons(JSONObject phenomenonsJson) {
+        Map<String, Double> result = new HashMap<>();
+        Set<String> keySet = phenomenonsJson.keySet();
 
-        phenomenonsJson
-                .stream()
-                .map(p -> {
-                    JSONObject phenomenon = (JSONObject) p;
-                    double phenomenonValue = readAsDouble(EC_PHENOMENON_VALUE, phenomenon);
-                    double phenomenonUnit = readAsDouble(EC_PHENOMENON_UNIT, phenomenon);
-                    // TODO Continue here 
-                    return null;
-                });
+        for (String key : keySet) {
+            JSONObject phenomenonJson = (JSONObject) phenomenonsJson.get(key);
+            double value = readAsDouble(EC_PHENOMENON_VALUE, phenomenonJson);
+            result.put(key, value);
+        }
+
+        return result;
     }
 
     private static final double readAsDouble(String key, JSONObject json) {
