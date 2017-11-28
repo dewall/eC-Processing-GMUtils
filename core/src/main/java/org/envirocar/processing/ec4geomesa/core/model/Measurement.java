@@ -2,6 +2,8 @@ package org.envirocar.processing.ec4geomesa.core.model;
 
 import com.vividsolutions.jts.geom.Point;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -12,10 +14,9 @@ public class Measurement {
     private final String id;
     private final String trackId;
     private final Point point;
+    private final Date time;
 
-    private Date time;
-    private double speed;
-    private double rpm;
+    private Map<String, Double> phenomenons;
 
     /**
      * Constructor.
@@ -30,6 +31,7 @@ public class Measurement {
         this.trackId = trackId;
         this.point = point;
         this.time = time;
+        this.phenomenons = new HashMap<>();
     }
 
     public String getId() {
@@ -48,26 +50,6 @@ public class Measurement {
         return time.getTime();
     }
 
-    public void setTime(Date date) {
-        this.time = date;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
-    public double getRpm() {
-        return rpm;
-    }
-
-    public void setRpm(double rpm) {
-        this.rpm = rpm;
-    }
-
     public Point getPoint() {
         return point;
     }
@@ -78,15 +60,21 @@ public class Measurement {
                 && this.point != null;
     }
 
-    @Override
-    public String toString() {
-        return "Measurement{" + "id=" + id 
-                + ", trackId=" + trackId 
-                + ", point=" + point 
-                + ", time=" + time 
-                + ", speed=" + speed 
-                + ", rpm=" + rpm + '}';
+    public Map<String, Double> getPhenomenons() {
+        return phenomenons;
     }
 
-    
+    public void setPhenomenons(Map<String, Double> phenomenons) {
+        this.phenomenons = phenomenons;
+    }
+
+    @Override
+    public String toString() {
+        return "Measurement{"
+                + "id=" + id
+                + ", trackId=" + trackId
+                + ", point=" + point
+                + ", time=" + time + '}';
+    }
+
 }
