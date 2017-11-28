@@ -4,7 +4,7 @@ package org.envirocar.processing.ec4geomesa.core.decoding;
  *
  * @author dewall
  */
-public interface GeoJSONConstants {
+public interface JSONConstants {
 
     String KEY_PROPERTIES = "properties";
     String KEY_FEATURES = "features";
@@ -22,6 +22,7 @@ public interface GeoJSONConstants {
     String EC_SENSOR_CONSTYEAR = "constructionYear";
     String EC_SENSOR_MANUFACTURER = "manufacturer";
 
+    String EC_PHENOMENONS = "phenomenons";
     String EC_PHENOMENON_VALUE = "value";
     String EC_PHENOMENON_UNIT = "unit";
 }
