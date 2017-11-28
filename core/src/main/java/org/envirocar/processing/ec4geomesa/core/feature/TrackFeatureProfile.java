@@ -51,10 +51,8 @@ public class TrackFeatureProfile extends AbstractFeatureProfile<Track> {
     @Override
     public SimpleFeatureType createSimpleFeatureType() {
         try {
-            SimpleFeatureType featureType = createSimpleFeatureType(
-                    featureAttributes);
-            featureType.getUserData().put(SimpleFeatureTypes.DEFAULT_DATE_KEY,
-                    featureAttributes.get(1));
+            SimpleFeatureType featureType = createSimpleFeatureType(featureAttributes);
+            featureType.getUserData().put(SimpleFeatureTypes.DEFAULT_DATE_KEY, "StartTime");
             return featureType;
         } catch (SchemaException ex) {
             LOG.error("Error while creating TrackFeature", ex);
