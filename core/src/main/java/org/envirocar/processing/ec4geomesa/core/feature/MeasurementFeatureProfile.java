@@ -4,6 +4,8 @@ import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Joiner;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.Measurement;
 import org.geotools.data.DataUtilities;
@@ -116,7 +118,11 @@ public class MeasurementFeatureProfile extends AbstractFeatureProfile<Measuremen
         sf.setAttribute("Time", t.getTime());
         sf.setDefaultGeometry(t.getPoint());
 
-        // TODO Phenomenons.
+        // setting phenomenons
+        Map<String, Double> phenomenons = t.getPhenomenons();
+        for (Entry<String, Double> phenomenon : phenomenons.entrySet()) {
+            sf.setAttribute(phenomenon.getKey(), phenomenon.getValue());
+        }
         return sf;
     }
 
