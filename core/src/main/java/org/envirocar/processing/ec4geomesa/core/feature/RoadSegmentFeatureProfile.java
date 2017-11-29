@@ -4,10 +4,8 @@ import com.beust.jcommander.internal.Lists;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
-import org.envirocar.processing.ec4geomesa.core.model.Measurement;
 import org.envirocar.processing.ec4geomesa.core.model.RoadSegment;
 import org.geotools.feature.SchemaException;
-import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -20,7 +18,7 @@ public class RoadSegmentFeatureProfile extends AbstractFeatureProfile<RoadSegmen
     private static final Logger LOGGER = Logger.getLogger(RoadSegmentFeatureProfile.class);
     private static final String TABLE_NAME = "roadsegments";
 
-    private static final List<String> FEATURE_ATTRIBUTES = Lists.newArrayList(
+    private final List<String> FEATURE_ATTRIBUTES = Lists.newArrayList(
             "OSMID:Integer",
             "*geom:LineString:srid=4326"
     );
@@ -31,6 +29,11 @@ public class RoadSegmentFeatureProfile extends AbstractFeatureProfile<RoadSegmen
      */
     public RoadSegmentFeatureProfile(String tableName) {
         super(tableName);
+        for (String phenomenon : MeasurementFeatureProfile.PHENOMENONS) {
+            FEATURE_ATTRIBUTES.add("sum" + phenomenon);
+            FEATURE_ATTRIBUTES.add("avg" + phenomenon);
+            FEATURE_ATTRIBUTES.add("num" + phenomenon);
+        }
     }
 
     @Override
@@ -50,12 +53,22 @@ public class RoadSegmentFeatureProfile extends AbstractFeatureProfile<RoadSegmen
         sf.setAttribute("OSMID", t.getOsmId());
         sf.setDefaultGeometry(t.getSegment());
 
-        // setting phenomenons
-//        Map<String, Double> phenomenons = t.getSummedValues();
-//        for (Map.Entry<String, Double> phenomenon : phenomenons.entrySet()) {
-//            sf.setAttribute(phenomenon.getKey(), phenomenon.getValue());
-//        }
-//        return sf;
+        Map<String, Double> sumValues = t.getSummedValues();
+        for (Map.Entry<String, Double> phenomenon : sumValues.entrySet()) {
+            sf.setAttribute("sum" + phenomenon.getKey(), phenomenon.getValue());
+        }
+
+        Map<String, Double> avgValues = t.getAvgValues();
+        for (Map.Entry<String, Double> phenomenon : avgValues.entrySet()) {
+            sf.setAttribute("avg" + phenomenon.getKey(), phenomenon.getValue());
+        }
+
+        Map<String, Integer> numValues = t.getNumValues();
+        for (Map.Entry<String, Integer> phenomenon : numValues.entrySet()) {
+            sf.setAttribute("num" + phenomenon.getKey(), phenomenon.getValue());
+        }
+
+        return sf;
     }
 
 }

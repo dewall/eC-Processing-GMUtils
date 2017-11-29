@@ -25,7 +25,7 @@ public class MeasurementFeatureProfile extends AbstractFeatureProfile<Measuremen
 
     private static final String TABLE_NAME = "measurements";
 
-    private static final List<String> PHENOMENONS = Arrays.asList(
+    protected static final List<String> PHENOMENONS = Arrays.asList(
             "CO2",
             "Calculated MAF",
             "Consumption",
