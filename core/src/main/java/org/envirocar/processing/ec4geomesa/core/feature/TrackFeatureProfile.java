@@ -44,6 +44,9 @@ public class TrackFeatureProfile extends AbstractFeatureProfile<Track> {
             "*geom:LineString:srid=4326"
     );
 
+    /**
+     * Constructor.
+     */
     public TrackFeatureProfile() {
         super(TABLE_NAME);
     }
