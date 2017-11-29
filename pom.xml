@@ -12,6 +12,7 @@
     <modules>
         <module>ingestor</module>
         <module>core</module>
+        <module>mapmatching</module>
     </modules>
     
     <properties>
