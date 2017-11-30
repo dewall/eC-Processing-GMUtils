@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.Measurement;
+import org.geotools.data.DataStore;
 import org.geotools.data.DataUtilities;
 import org.geotools.feature.SchemaException;
 import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
@@ -124,6 +125,11 @@ public class MeasurementFeatureProfile extends AbstractFeatureProfile<Measuremen
             sf.setAttribute(phenomenon.getKey(), phenomenon.getValue());
         }
         return sf;
+    }
+
+    @Override
+    public Measurement getById(DataStore ds, String id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
