@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.CarSensor;
 import org.envirocar.processing.ec4geomesa.core.model.Track;
+import org.geotools.data.DataStore;
 import org.geotools.feature.SchemaException;
 import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
 import org.opengis.feature.simple.SimpleFeature;
@@ -99,6 +100,11 @@ public class TrackFeatureProfile extends AbstractFeatureProfile<Track> {
         sf.setAttribute(ATTRIB_ENGINEDISPLACEMENT, s.getEngineDisplacement());
 
         return sf;
+    }
+
+    @Override
+    public Track getById(DataStore ds, String id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

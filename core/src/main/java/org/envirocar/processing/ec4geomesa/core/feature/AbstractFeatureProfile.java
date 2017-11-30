@@ -18,6 +18,7 @@ package org.envirocar.processing.ec4geomesa.core.feature;
 import com.google.common.base.Joiner;
 import java.util.List;
 import org.apache.log4j.Logger;
+import org.geotools.data.DataStore;
 import org.geotools.data.DataUtilities;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
@@ -58,6 +59,8 @@ public abstract class AbstractFeatureProfile<T> {
     protected abstract SimpleFeatureType createSimpleFeatureType();
 
     public abstract SimpleFeature createSimpleFeature(T t);
+    
+    public abstract T getById(DataStore ds, String id);
 
     public String getTableName() {
         return this.tableName;
