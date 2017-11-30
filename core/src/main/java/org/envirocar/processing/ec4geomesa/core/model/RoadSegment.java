@@ -14,7 +14,7 @@ public class RoadSegment {
     private final LineString segment;
 
     // different statistics
-    private final Map<String, Double> summedValues;
+    private final Map<String, Double> sumValues;
     private final Map<String, Double> avgValues;
     private final Map<String, Integer> numValues;
 
@@ -28,7 +28,7 @@ public class RoadSegment {
         this.osmId = osmId;
         this.segment = segment;
 
-        this.summedValues = new HashMap<>();
+        this.sumValues = new HashMap<>();
         this.avgValues = new HashMap<>();
         this.numValues = new HashMap<>();
     }
@@ -42,7 +42,7 @@ public class RoadSegment {
     }
 
     public Map<String, Double> getSummedValues() {
-        return summedValues;
+        return sumValues;
     }
 
     public Map<String, Double> getAvgValues() {
@@ -54,7 +54,7 @@ public class RoadSegment {
     }
 
     public Double getSumValue(String key) {
-        return (Double) getValue(this.summedValues, key);
+        return (Double) getValue(this.sumValues, key);
     }
 
     public Double getAvgValue(String key) {
@@ -63,6 +63,12 @@ public class RoadSegment {
 
     public Integer getNumValue(String key) {
         return (Integer) getValue(this.numValues, key);
+    }
+
+    public void addValue(String key, double sumValue, double avgValue, int numValue) {
+        this.sumValues.put(key, sumValue);
+        this.avgValues.put(key, avgValue);
+        this.numValues.put(key, numValue);
     }
 
     private Number getValue(Map<String, ? extends Number> map, String key) {
