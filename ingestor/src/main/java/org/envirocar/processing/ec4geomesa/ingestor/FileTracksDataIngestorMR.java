@@ -1,5 +1,7 @@
 package org.envirocar.processing.ec4geomesa.ingestor;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import java.util.Map;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -12,9 +14,11 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.envirocar.processing.ec4geomesa.core.DataStoreInstanceHandler;
+import org.envirocar.processing.ec4geomesa.core.GeoMesaStoreModule;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
 import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureStore;
 import org.envirocar.processing.ec4geomesa.ingestor.input.MRJsonInputFormat;
+import org.geotools.data.DataStore;
 import org.locationtech.geomesa.jobs.interop.mapreduce.GeoMesaOutputFormat;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -30,7 +34,14 @@ public class FileTracksDataIngestorMR {
         CommandLine cmd = parser.parse(options, args);
         String inputDir = cmd.getOptionValue("inputDir");
 
-        runIngestor(inputDir);
+        Map<String, String> datastoreConfig = DataStoreInstanceHandler.getDefaultDataStoreConf();
+
+        Injector injector = Guice.createInjector(new GeoMesaStoreModule(datastoreConfig));
+        DataStore instance = injector.getInstance(DataStore.class);
+        injector.getInstance(MeasurementFeatureStore.class);
+        injector.getInstance(TrackFeatureStore.class);
+
+        runIngestor(inputDir, datastoreConfig);
     }
 
     private static Options getCLOptions() {
@@ -42,12 +53,7 @@ public class FileTracksDataIngestorMR {
                         .create("inputDir"));
     }
 
-    private static void runIngestor(String inputDir) throws Exception {
-        DataStoreInstanceHandler datastore = DataStoreInstanceHandler.getDefaultInstance();
-        datastore.createFeatureSchema(new MeasurementFeatureStore());
-        datastore.createFeatureSchema(new TrackFeatureStore());
-
-        Map<String, String> datastoreConfig = datastore.getDatastoreConfig();
+    private static void runIngestor(String inputDir, Map<String, String> datastoreConfig) throws Exception {
         Configuration config = new Configuration();
 
         Job job = Job.getInstance(config);

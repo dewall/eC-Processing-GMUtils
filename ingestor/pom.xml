@@ -20,6 +20,12 @@
             <version>${project.version}</version>
         </dependency>
         
+        <!-- Guice -->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>org.apache.accumulo</groupId>
             <artifactId>accumulo-core</artifactId>

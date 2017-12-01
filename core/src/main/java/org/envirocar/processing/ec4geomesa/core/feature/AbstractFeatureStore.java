@@ -28,8 +28,7 @@ public abstract class AbstractFeatureStore<T> {
 
     private static final Logger LOGGER = Logger.getLogger(AbstractFeatureStore.class);
 
-    @Inject
-    protected DataStore dataStore;
+    protected DataStore datastore;
 
     protected String tableName;
     protected String primaryKey;
@@ -44,16 +43,34 @@ public abstract class AbstractFeatureStore<T> {
      * @param primaryKey
      * @param schema
      */
-    public AbstractFeatureStore(String tableName, String primaryKey, List<String> schema) {
-        this(tableName, primaryKey, null, schema);
+    public AbstractFeatureStore(DataStore datastore, String tableName, String primaryKey, List<String> schema) {
+        this(datastore, tableName, primaryKey, null, schema);
     }
 
-    public AbstractFeatureStore(String tableName, String primaryKey, String timeKey, List<String> schema) {
+    public AbstractFeatureStore(DataStore datastore, String tableName, String primaryKey, String timeKey, List<String> schema) {
+        this.datastore = datastore;
         this.tableName = tableName;
         this.primaryKey = primaryKey;
 
+        System.out.println("creating feature type");
         this.featureType = createSimpleFeatureType(schema, timeKey);
+
+        System.out.println("creating feature builder");
         this.featureBuilder = new SimpleFeatureBuilder(this.featureType);
+
+        try {
+
+            System.out.println("creating schema");
+            this.datastore.createSchema(this.featureType);
+            System.out.println("created");
+        } catch (IOException ex) {
+            System.out.println(String.format("Unable to create schema for %s.", tableName));
+            System.out.println(ex.getStackTrace());
+            LOGGER.error(String.format("Unable to create schema for %s.", tableName));
+            throw new RuntimeException(ex);
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     public String getTableName() {
@@ -101,7 +118,7 @@ public abstract class AbstractFeatureStore<T> {
     }
 
     private SimpleFeatureCollection fetch(Filter filter) throws IOException {
-        SimpleFeatureSource featureSource = this.dataStore.getFeatureSource(tableName);
+        SimpleFeatureSource featureSource = this.datastore.getFeatureSource(tableName);
         return featureSource.getFeatures(filter);
     }
 

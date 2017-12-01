@@ -1,10 +1,12 @@
 package org.envirocar.processing.ec4geomesa.core;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.multibindings.MapBinder;
 import java.io.IOException;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
+import org.envirocar.processing.ec4geomesa.core.feature.RoadSegmentFeatureStore;
+import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureStore;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 
@@ -34,13 +36,20 @@ public class GeoMesaStoreModule extends AbstractModule {
         }
     }
 
+    public GeoMesaStoreModule() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     @Override
     protected void configure() {
-        MapBinder<String, String> newMapBinder = MapBinder.newMapBinder(binder(), String.class, String.class);
-        geomesaConfig.entrySet().stream()
-                .forEach(e -> newMapBinder.addBinding(e.getKey()).toInstance(e.getValue()));
+//        MapBinder<String, String> newMapBinder = MapBinder.newMapBinder(binder(), String.class, String.class);
+//        geomesaConfig.entrySet().stream()
+//                .forEach(e -> newMapBinder.addBinding(e.getKey()).toInstance(e.getValue()));
 
         bind(DataStore.class).toInstance(this.geomesaDatastore);
+        bind(TrackFeatureStore.class);
+        bind(MeasurementFeatureStore.class);
+        bind(RoadSegmentFeatureStore.class);
     }
 
 }

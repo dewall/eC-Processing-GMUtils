@@ -1,11 +1,13 @@
 package org.envirocar.processing.ec4geomesa.core.feature;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.LineString;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.RoadSegment;
+import org.geotools.data.DataStore;
 import org.opengis.feature.simple.SimpleFeature;
 
 /**
@@ -35,9 +37,12 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
 
     /**
      * Constructor.
+     *
+     * @param datastore
      */
-    public RoadSegmentFeatureStore() {
-        super(TABLE_NAME, ATTRIBUTE_OSMID, FEATURE_ATTRIBUTES);
+    @Inject
+    public RoadSegmentFeatureStore(DataStore datastore) {
+        super(datastore, TABLE_NAME, ATTRIBUTE_OSMID, FEATURE_ATTRIBUTES);
     }
 
     @Override

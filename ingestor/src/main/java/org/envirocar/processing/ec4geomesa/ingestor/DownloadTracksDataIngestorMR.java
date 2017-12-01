@@ -1,5 +1,7 @@
 package org.envirocar.processing.ec4geomesa.ingestor;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import java.io.IOException;
 import java.util.Map;
 import org.apache.commons.cli.BasicParser;
@@ -11,9 +13,11 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.envirocar.processing.ec4geomesa.core.DataStoreInstanceHandler;
+import org.envirocar.processing.ec4geomesa.core.GeoMesaStoreModule;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
 import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureStore;
 import org.envirocar.processing.ec4geomesa.ingestor.input.DownloadTracksInputFormat;
+import org.geotools.data.DataStore;
 import org.locationtech.geomesa.jobs.interop.mapreduce.GeoMesaOutputFormat;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -32,7 +36,17 @@ public class DownloadTracksDataIngestorMR {
         CommandLine cmd = parser.parse(options, args);
         int limit = getLimitOptionValue(cmd);
 
-        runIngestor(limit);
+        Map<String, String> datastoreConfig = DataStoreInstanceHandler.getDefaultDataStoreConf();
+        System.out.println("started");
+        Injector injector = Guice.createInjector(new GeoMesaStoreModule(datastoreConfig));
+        System.out.println("started");
+        DataStore instance = injector.getInstance(DataStore.class);
+        System.out.println("started");
+        injector.getInstance(MeasurementFeatureStore.class);
+        System.out.println("started");
+        injector.getInstance(TrackFeatureStore.class);
+
+        runIngestor(limit, datastoreConfig);
     }
 
     private static Options getCLOptions() {
@@ -48,12 +62,9 @@ public class DownloadTracksDataIngestorMR {
         return limitValue != null ? Integer.parseInt(limitValue) : OPTION_LIMIT_DEFAULT;
     }
 
-    private static void runIngestor(int limit) throws IOException, InterruptedException, Exception {
-        DataStoreInstanceHandler datastore = DataStoreInstanceHandler.getDefaultInstance();
-        datastore.createFeatureSchema(new MeasurementFeatureStore());
-        datastore.createFeatureSchema(new TrackFeatureStore());
+    private static void runIngestor(int limit, Map<String, String> datastoreConfig) throws IOException,
+            InterruptedException, Exception {
 
-        Map<String, String> datastoreConfig = datastore.getDatastoreConfig();
         Configuration config = new Configuration();
         config.setInt(OPTION_LIMIT, limit);
 
@@ -72,6 +83,7 @@ public class DownloadTracksDataIngestorMR {
         GeoMesaOutputFormat.configureDataStore(job, datastoreConfig);
 
         job.submit();
+        System.out.println("submitted");
         if (!job.waitForCompletion(true)) {
             throw new Exception("Job execution failed...");
         }
