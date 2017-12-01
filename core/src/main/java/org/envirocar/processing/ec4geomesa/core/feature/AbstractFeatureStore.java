@@ -29,10 +29,9 @@ import org.opengis.feature.simple.SimpleFeatureType;
  *
  * @author dewall
  */
-public abstract class AbstractFeatureProfile<T> {
+public abstract class AbstractFeatureStore<T> {
 
-    private static final Logger LOG = Logger.getLogger(
-            AbstractFeatureProfile.class);
+    private static final Logger LOG = Logger.getLogger(AbstractFeatureStore.class);
 
     protected String tableName;
 
@@ -44,7 +43,7 @@ public abstract class AbstractFeatureProfile<T> {
      *
      * @param tableName
      */
-    public AbstractFeatureProfile(String tableName) {
+    public AbstractFeatureStore(String tableName) {
         this.tableName = tableName;
         this.featureType = this.createSimpleFeatureType();
         this.featureBuilder = new SimpleFeatureBuilder(this.featureType);

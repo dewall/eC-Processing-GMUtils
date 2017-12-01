@@ -3,7 +3,7 @@ package org.envirocar.processing.ec4geomesa.core;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import org.envirocar.processing.ec4geomesa.core.feature.AbstractFeatureProfile;
+import org.envirocar.processing.ec4geomesa.core.feature.AbstractFeatureStore;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -56,7 +56,7 @@ public class DataStoreInstanceHandler {
         this.dataStore = DataStoreFinder.getDataStore(dataStoreConfig);
     }
 
-    public void createFeatureSchema(AbstractFeatureProfile profile) throws IOException {
+    public void createFeatureSchema(AbstractFeatureStore profile) throws IOException {
         SimpleFeatureType featureType = profile.getFeatureType();
         this.dataStore.createSchema(featureType);
     }

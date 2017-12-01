@@ -34,10 +34,9 @@ import org.opengis.feature.simple.SimpleFeatureType;
  *
  * @author dewall
  */
-public class MeasurementFeatureProfile extends AbstractFeatureProfile<Measurement> {
+public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
 
-    private static final Logger LOG = Logger.getLogger(
-            MeasurementFeatureProfile.class);
+    private static final Logger LOG = Logger.getLogger(MeasurementFeatureStore.class);
 
     private static final String TABLE_NAME = "measurements";
 
@@ -103,7 +102,7 @@ public class MeasurementFeatureProfile extends AbstractFeatureProfile<Measuremen
     /**
      * Constructor.
      */
-    public MeasurementFeatureProfile() {
+    public MeasurementFeatureStore() {
         super(TABLE_NAME);
     }
 

@@ -22,9 +22,9 @@ import org.opengis.filter.Filter;
  *
  * @author dewall
  */
-public class RoadSegmentFeatureProfile extends AbstractFeatureProfile<RoadSegment> {
+public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
 
-    private static final Logger LOGGER = Logger.getLogger(RoadSegmentFeatureProfile.class);
+    private static final Logger LOGGER = Logger.getLogger(RoadSegmentFeatureStore.class);
     private static final String TABLE_NAME = "roadsegments";
 
     private static final String ATTRIBUTE_OSMID = "OSMID";
@@ -39,9 +39,9 @@ public class RoadSegmentFeatureProfile extends AbstractFeatureProfile<RoadSegmen
      *
      * @param tableName
      */
-    public RoadSegmentFeatureProfile(String tableName) {
+    public RoadSegmentFeatureStore(String tableName) {
         super(tableName);
-        for (String phenomenon : MeasurementFeatureProfile.PHENOMENONS) {
+        for (String phenomenon : MeasurementFeatureStore.PHENOMENONS) {
             FEATURE_ATTRIBUTES.add("sum" + phenomenon + ":Double");
             FEATURE_ATTRIBUTES.add("avg" + phenomenon + ":Double");
             FEATURE_ATTRIBUTES.add("num" + phenomenon + ":Integer");
@@ -88,7 +88,7 @@ public class RoadSegmentFeatureProfile extends AbstractFeatureProfile<RoadSegmen
         LineString lineString = (LineString) sf.getDefaultGeometry();
         RoadSegment result = new RoadSegment(osmid, lineString);
 
-        for (String phenomenon : MeasurementFeatureProfile.PHENOMENONS) {
+        for (String phenomenon : MeasurementFeatureStore.PHENOMENONS) {
             double sumValue = (double) sf.getAttribute("sum" + phenomenon);
             double avgValue = (double) sf.getAttribute("avg" + phenomenon);
             int numValue = (int) sf.getAttribute("num" + phenomenon);
