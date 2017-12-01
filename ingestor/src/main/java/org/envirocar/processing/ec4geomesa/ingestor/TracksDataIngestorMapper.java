@@ -1,5 +1,6 @@
 package org.envirocar.processing.ec4geomesa.ingestor;
 
+import com.google.inject.Guice;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.IOException;
 import org.apache.hadoop.io.LongWritable;
@@ -23,7 +24,6 @@ public class TracksDataIngestorMapper extends Mapper<LongWritable, Text, Text, S
 
     private static final Logger LOG = Logger.getLogger(TracksDataIngestorMapper.class);
 
-    private DataStoreInstanceHandler datastore;
     private GeometryFactory geometryFactory;
     private TrackFeatureStore trackProfile;
     private MeasurementFeatureStore measurementProfile;
@@ -33,8 +33,8 @@ public class TracksDataIngestorMapper extends Mapper<LongWritable, Text, Text, S
             InterruptedException {
         super.setup(context);
         this.geometryFactory = JTSFactoryFinder.getGeometryFactory();
-        this.trackProfile = new TrackFeatureStore();
-        this.measurementProfile = new MeasurementFeatureStore();
+        this.trackProfile = new TrackFeatureStore(null);
+        this.measurementProfile = new MeasurementFeatureStore(null);
     }
 
     @Override
@@ -43,14 +43,14 @@ public class TracksDataIngestorMapper extends Mapper<LongWritable, Text, Text, S
 
         try {
             Track track = EnvirocarJSONUtils.parseTrack(value.toString());
-            SimpleFeature trackFeature = trackProfile.createSimpleFeature(track);
+            SimpleFeature trackFeature = trackProfile.createFeatureFromEntity(track);
             if (track != null && track.isValid() && trackFeature != null) {
                 context.write(new Text(), trackFeature);
 
                 track.getMeasurements()
                         .stream()
                         .filter(m -> m.isValid())
-                        .map(m -> measurementProfile.createSimpleFeature(m))
+                        .map(m -> measurementProfile.createFeatureFromEntity(m))
                         .forEach(m -> {
                             try {
                                 context.write(new Text(), m);

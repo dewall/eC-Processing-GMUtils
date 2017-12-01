@@ -17,12 +17,14 @@ package org.envirocar.processing.ec4geomesa.core.feature;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.LineString;
 import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.CarSensor;
 import org.envirocar.processing.ec4geomesa.core.model.Track;
+import org.geotools.data.DataStore;
 import org.geotools.data.DataUtilities;
 import org.geotools.feature.SchemaException;
 import org.opengis.feature.simple.SimpleFeature;
@@ -64,9 +66,12 @@ public class TrackFeatureStore extends AbstractFeatureStore<Track> {
 
     /**
      * Constructor.
+     *
+     * @param datastore
      */
-    public TrackFeatureStore() {
-        super(TABLE_NAME, ATTRIB_TRACKID, ATTRIB_STARTTIME, FEATURE_ATTRIBUTES);
+    @Inject
+    public TrackFeatureStore(DataStore datastore) {
+        super(datastore, TABLE_NAME, ATTRIB_TRACKID, ATTRIB_STARTTIME, FEATURE_ATTRIBUTES);
     }
 
     @Override

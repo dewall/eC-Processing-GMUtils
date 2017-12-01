@@ -16,14 +16,15 @@
 package org.envirocar.processing.ec4geomesa.core.feature;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.Point;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.Measurement;
+import org.geotools.data.DataStore;
 import org.opengis.feature.simple.SimpleFeature;
 
 /**
@@ -70,39 +71,20 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
             "MeasurementID:String",
             "TrackID:String",
             "Time:Date",
-            "*geom:Point:srid=4326",
-            "CO2:Double",
-            "Calculated MAF:Double",
-            "Consumption:Double",
-            "Engine Load:Double",
-            "Fuel System Loop:Double",
-            "Fuel System Status Code:Double",
-            "GPS Accuracy:Double",
-            "GPS Altitude:Double",
-            "GPS Bearing:Double",
-            "GPS HDOP:Double",
-            "GPS PDOP:Double",
-            "GPS Speed:Double",
-            "GPS VDOP:Double",
-            "Intake Pressure:Double",
-            "Intake Temperature:Double",
-            "Long-Term Fuel Trim 1:Double",
-            "MAF:Double",
-            "O2 Lambda Current:Double",
-            "O2 Lambda Current ER:Double",
-            "O2 Lambda Voltage:Double",
-            "O2 Lambda Voltage ER:Double",
-            "Rpm:Double",
-            "Short-Term Fuel Trim 1:Double",
-            "Speed:Double",
-            "Throttle Position:Double"
+            "*geom:Point:srid=4326"
     );
 
+//    static {
+//        PHENOMENONS.forEach(p -> {
+//            FEATURE_ATTRIBUTES.add(p + ":Double");
+//        });
+//    }
     /**
      * Constructor.
      */
-    public MeasurementFeatureStore() {
-        super(TABLE_NAME, ATTRIB_MID, ATTRIB_TIME, PHENOMENONS);
+    @Inject
+    public MeasurementFeatureStore(DataStore datastore) {
+        super(datastore, TABLE_NAME, ATTRIB_MID, ATTRIB_TIME, PHENOMENONS);
     }
 
     @Override
@@ -123,7 +105,7 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
                 forEach((phenomenon) -> {
                     sf.setAttribute(phenomenon.getKey(), phenomenon.getValue());
                 });
-        
+
         return sf;
     }
 
