@@ -14,6 +14,7 @@ import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
+import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -42,18 +43,17 @@ public abstract class AbstractFeatureStore<T> {
      * @param tableName
      * @param primaryKey
      * @param schema
-     * @param dataStore
      */
-    public AbstractFeatureStore(String tableName, String primaryKey, List<String> schema, DataStore dataStore) {
+    public AbstractFeatureStore(String tableName, String primaryKey, List<String> schema) {
+        this(tableName, primaryKey, null, schema);
+    }
+
+    public AbstractFeatureStore(String tableName, String primaryKey, String timeKey, List<String> schema) {
         this.tableName = tableName;
         this.primaryKey = primaryKey;
 
-        try {
-            this.featureType = DataUtilities.createType(tableName, Joiner.on(",").join(schema));
-            this.featureBuilder = new SimpleFeatureBuilder(this.featureType);
-        } catch (SchemaException ex) {
-            LOGGER.error(String.format("Error while creating FeatureType for Table %s", tableName), ex);
-        }
+        this.featureType = createSimpleFeatureType(schema, timeKey);
+        this.featureBuilder = new SimpleFeatureBuilder(this.featureType);
     }
 
     public String getTableName() {
@@ -105,10 +105,22 @@ public abstract class AbstractFeatureStore<T> {
         return featureSource.getFeatures(filter);
     }
 
-    protected abstract SimpleFeatureType createSimpleFeatureType();
+    protected SimpleFeatureType createSimpleFeatureType(List<String> schema, String timeKey) {
+        try {
+            SimpleFeatureType featureType = DataUtilities.createType(tableName, Joiner.on(",").join(schema));
+            if (timeKey != null) {
+                featureType.getUserData().put(
+                        SimpleFeatureTypes.DEFAULT_DATE_KEY, timeKey);
+            }
+            return featureType;
+        } catch (SchemaException ex) {
+            LOGGER.error(String.format("Error while creating FeatureType for Table %s", tableName), ex);
+        }
+        return null;
+    }
 
     protected abstract T createEntityFromFeature(SimpleFeature sf);
 
-    protected abstract SimpleFeature createSimpleFeature(T t);
+    protected abstract SimpleFeature createFeatureFromEntity(T t);
 
 }

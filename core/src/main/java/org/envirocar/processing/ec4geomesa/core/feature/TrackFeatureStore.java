@@ -1,13 +1,15 @@
 package org.envirocar.processing.ec4geomesa.core.feature;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.vividsolutions.jts.geom.LineString;
+import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.CarSensor;
 import org.envirocar.processing.ec4geomesa.core.model.Track;
-import org.geotools.data.DataStore;
+import org.geotools.data.DataUtilities;
 import org.geotools.feature.SchemaException;
-import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -17,7 +19,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 public class TrackFeatureStore extends AbstractFeatureStore<Track> {
 
-    private static final Logger LOG = Logger.
+    private static final Logger LOGGER = Logger.
             getLogger(TrackFeatureStore.class);
 
     private static final String TABLE_NAME = "tracks";
@@ -32,7 +34,7 @@ public class TrackFeatureStore extends AbstractFeatureStore<Track> {
     private static final String ATTRIB_CONSTRUCTIONYEAR = "CarConstructionYear";
     private static final String ATTRIB_ENGINEDISPLACEMENT = "CarEngineDisplacement";
 
-    private static final List<String> featureAttributes = Lists.newArrayList(
+    private static final List<String> FEATURE_ATTRIBUTES = Lists.newArrayList(
             "TrackID:String",
             "StartTime:Date",
             "EndTime:Date",
@@ -49,23 +51,11 @@ public class TrackFeatureStore extends AbstractFeatureStore<Track> {
      * Constructor.
      */
     public TrackFeatureStore() {
-        super(TABLE_NAME);
+        super(TABLE_NAME, ATTRIB_TRACKID, ATTRIB_STARTTIME, FEATURE_ATTRIBUTES);
     }
 
     @Override
-    public SimpleFeatureType createSimpleFeatureType() {
-        try {
-            SimpleFeatureType featureType = createSimpleFeatureType(featureAttributes);
-            featureType.getUserData().put(SimpleFeatureTypes.DEFAULT_DATE_KEY, "StartTime");
-            return featureType;
-        } catch (SchemaException ex) {
-            LOG.error("Error while creating TrackFeature", ex);
-        }
-        return null;
-    }
-
-    @Override
-    public SimpleFeature createSimpleFeature(Track t) {
+    public SimpleFeature createFeatureFromEntity(Track t) {
         if (!t.isValid()) {
             return null;
         }
@@ -88,8 +78,24 @@ public class TrackFeatureStore extends AbstractFeatureStore<Track> {
     }
 
     @Override
-    public Track getById(DataStore ds, String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    protected Track createEntityFromFeature(SimpleFeature sf) {
+        String trackId = (String) sf.getAttribute(ATTRIB_TRACKID);
+        Track track = new Track(trackId);
+        track.setLength((double) sf.getAttribute(ATTRIB_LENGTH));
+        track.setStartingTime((Date) sf.getAttribute(ATTRIB_STARTTIME));
+        track.setEndingTime((Date) sf.getAttribute(ATTRIB_ENDTIME));
+        track.setLineString((LineString) sf.getDefaultGeometry());
+
+        // create car type
+        CarSensor s = new CarSensor();
+        s.setManufacturer((String) sf.getAttribute(ATTRIB_MANUFACTURER));
+        s.setModel((String) sf.getAttribute(ATTRIB_MODEL));
+        s.setFuelType((String) sf.getAttribute(ATTRIB_FUELTYPE));
+        s.setConstructionYear((int) sf.getAttribute(ATTRIB_CONSTRUCTIONYEAR));
+        s.setEngineDisplacement((int) sf.getAttribute(ATTRIB_ENGINEDISPLACEMENT));
+        track.setCarSensor(s);
+
+        return track;
     }
 
 }

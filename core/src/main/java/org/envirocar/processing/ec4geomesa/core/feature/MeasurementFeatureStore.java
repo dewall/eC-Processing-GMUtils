@@ -1,19 +1,15 @@
 package org.envirocar.processing.ec4geomesa.core.feature;
 
 import com.beust.jcommander.internal.Lists;
-import com.google.common.base.Joiner;
+import com.vividsolutions.jts.geom.Point;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.Measurement;
-import org.geotools.data.DataStore;
-import org.geotools.data.DataUtilities;
-import org.geotools.feature.SchemaException;
-import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  *
@@ -24,6 +20,9 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
     private static final Logger LOG = Logger.getLogger(MeasurementFeatureStore.class);
 
     private static final String TABLE_NAME = "measurements";
+    private static final String ATTRIB_MID = "MeasurementID";
+    private static final String ATTRIB_TRACKID = "TrackID";
+    private static final String ATTRIB_TIME = "Time";
 
     protected static final List<String> PHENOMENONS = Arrays.asList(
             "CO2",
@@ -88,47 +87,44 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
      * Constructor.
      */
     public MeasurementFeatureStore() {
-        super(TABLE_NAME);
+        super(TABLE_NAME, ATTRIB_MID, ATTRIB_TIME, PHENOMENONS);
     }
 
     @Override
-    public SimpleFeatureType createSimpleFeatureType() {
-        try {
-            String spec = Joiner.on(",").join(FEATURE_ATTRIBUTES);
-            this.featureType = DataUtilities.createType(TABLE_NAME, spec);
-            this.featureType.getUserData().put(
-                    SimpleFeatureTypes.DEFAULT_DATE_KEY, "Time");
-        } catch (SchemaException ex) {
-            LOG.error(ex);
-        }
-
-        return featureType;
-
-    }
-
-    @Override
-    public SimpleFeature createSimpleFeature(Measurement t) {
+    public SimpleFeature createFeatureFromEntity(Measurement t) {
         if (!t.isValid()) {
             return null;
         }
 
         SimpleFeature sf = featureBuilder.buildFeature(t.getId());
-        sf.setAttribute("MeasurementID", t.getId());
-        sf.setAttribute("TrackID", t.getTrackId());
-        sf.setAttribute("Time", t.getTime());
+        sf.setAttribute(ATTRIB_MID, t.getId());
+        sf.setAttribute(ATTRIB_TRACKID, t.getTrackId());
+        sf.setAttribute(ATTRIB_TIME, t.getTime());
         sf.setDefaultGeometry(t.getPoint());
 
         // setting phenomenons
         Map<String, Double> phenomenons = t.getPhenomenons();
-        for (Entry<String, Double> phenomenon : phenomenons.entrySet()) {
-            sf.setAttribute(phenomenon.getKey(), phenomenon.getValue());
-        }
+        phenomenons.entrySet().
+                forEach((phenomenon) -> {
+                    sf.setAttribute(phenomenon.getKey(), phenomenon.getValue());
+                });
+        
         return sf;
     }
 
     @Override
-    public Measurement getById(DataStore ds, String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    protected Measurement createEntityFromFeature(SimpleFeature sf) {
+        if (sf == null) {
+            return null;
+        }
+
+        String mID = (String) sf.getAttribute(ATTRIB_MID);
+        String tID = (String) sf.getAttribute(ATTRIB_TRACKID);
+        Date time = (Date) sf.getAttribute(ATTRIB_TIME);
+        Point point = (Point) sf.getDefaultGeometry();
+        Measurement m = new Measurement(mID, tID, point, time);
+
+        return m;
     }
 
 }
