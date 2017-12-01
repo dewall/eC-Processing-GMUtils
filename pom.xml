@@ -30,6 +30,7 @@
         <simple.json.version>1.1.1</simple.json.version>
         <commons.cli.version>1.2</commons.cli.version>
         <log4j.version>1.2.17</log4j.version>
+        <guice.version>4.1.0</guice.version>
         
         <scala.abi.version>2.11</scala.abi.version>
         <scala.version>2.11.8</scala.version>
@@ -58,7 +59,15 @@
                 <artifactId>hadoop-client</artifactId>
                 <version>${hadoop.version}</version>
             </dependency>
-        
+            
+            <!-- Guice -->
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>${guice.version}</version>
+            </dependency>
+
+            <!-- GeoMesa and related libraries -->
             <dependency>
                 <groupId>org.apache.accumulo</groupId>
                 <artifactId>accumulo-core</artifactId>
@@ -74,7 +83,6 @@
                 <artifactId>zookeeper</artifactId>
                 <version>${zookeeper.version}</version>
             </dependency>
-        
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
                 <artifactId>geomesa-accumulo-datastore_${scala.abi.version}</artifactId>
@@ -85,6 +93,8 @@
                 <artifactId>geomesa-accumulo-jobs_${scala.abi.version}</artifactId>
                 <version>${geomesa.version}</version>
             </dependency>
+
+            <!-- utility libs -->
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-epsg-wkt</artifactId>
