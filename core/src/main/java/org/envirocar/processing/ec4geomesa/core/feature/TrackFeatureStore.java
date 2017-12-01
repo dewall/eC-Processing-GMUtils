@@ -15,10 +15,10 @@ import org.opengis.feature.simple.SimpleFeatureType;
  *
  * @author dewall
  */
-public class TrackFeatureProfile extends AbstractFeatureProfile<Track> {
+public class TrackFeatureStore extends AbstractFeatureStore<Track> {
 
     private static final Logger LOG = Logger.
-            getLogger(TrackFeatureProfile.class);
+            getLogger(TrackFeatureStore.class);
 
     private static final String TABLE_NAME = "tracks";
 
@@ -48,7 +48,7 @@ public class TrackFeatureProfile extends AbstractFeatureProfile<Track> {
     /**
      * Constructor.
      */
-    public TrackFeatureProfile() {
+    public TrackFeatureStore() {
         super(TABLE_NAME);
     }
 
