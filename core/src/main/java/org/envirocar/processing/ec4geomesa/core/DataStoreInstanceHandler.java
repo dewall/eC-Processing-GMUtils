@@ -70,7 +70,8 @@ public class DataStoreInstanceHandler {
     }
 
     private static Map<String, String> getDefaultDataStoreConf() {
-        return toDataStoreConf(DEFAULT_INSTANCE_ID,
+        return toDataStoreConf(
+                DEFAULT_INSTANCE_ID,
                 DEFAULT_ZOOKEEPERS,
                 DEFAULT_USER,
                 DEFAULT_PASSWORD,

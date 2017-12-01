@@ -34,6 +34,17 @@ public abstract class AbstractFeatureStore<T> {
         this.featureBuilder = new SimpleFeatureBuilder(this.featureType);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param tableName
+     * @param schema
+     * @param dataStore
+     */
+    public AbstractFeatureStore(String tableName, List<String> schema, DataStore dataStore) {
+
+    }
+
     protected SimpleFeatureType createSimpleFeatureType(
             List<String> featureAttributes) throws SchemaException {
         String spec = Joiner.on(",").join(featureAttributes);
@@ -43,7 +54,7 @@ public abstract class AbstractFeatureStore<T> {
     protected abstract SimpleFeatureType createSimpleFeatureType();
 
     public abstract SimpleFeature createSimpleFeature(T t);
-    
+
     public abstract T getById(DataStore ds, String id);
 
     public String getTableName() {

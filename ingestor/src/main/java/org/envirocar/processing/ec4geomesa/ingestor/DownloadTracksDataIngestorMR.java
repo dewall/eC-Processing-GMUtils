@@ -11,8 +11,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.envirocar.processing.ec4geomesa.core.DataStoreInstanceHandler;
-import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureProfile;
-import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureProfile;
+import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
+import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureStore;
 import org.envirocar.processing.ec4geomesa.ingestor.input.DownloadTracksInputFormat;
 import org.locationtech.geomesa.jobs.interop.mapreduce.GeoMesaOutputFormat;
 import org.opengis.feature.simple.SimpleFeature;
@@ -50,8 +50,8 @@ public class DownloadTracksDataIngestorMR {
 
     private static void runIngestor(int limit) throws IOException, InterruptedException, Exception {
         DataStoreInstanceHandler datastore = DataStoreInstanceHandler.getDefaultInstance();
-        datastore.createFeatureSchema(new MeasurementFeatureProfile());
-        datastore.createFeatureSchema(new TrackFeatureProfile());
+        datastore.createFeatureSchema(new MeasurementFeatureStore());
+        datastore.createFeatureSchema(new TrackFeatureStore());
 
         Map<String, String> datastoreConfig = datastore.getDatastoreConfig();
         Configuration config = new Configuration();
