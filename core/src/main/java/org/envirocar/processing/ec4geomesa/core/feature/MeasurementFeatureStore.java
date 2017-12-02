@@ -74,17 +74,20 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
             "*geom:Point:srid=4326"
     );
 
-//    static {
-//        PHENOMENONS.forEach(p -> {
-//            FEATURE_ATTRIBUTES.add(p + ":Double");
-//        });
-//    }
+    static {
+        PHENOMENONS.forEach(p -> {
+            FEATURE_ATTRIBUTES.add(p + ":Double");
+        });
+    }
+
     /**
      * Constructor.
+     *
+     * @param datastore
      */
     @Inject
     public MeasurementFeatureStore(DataStore datastore) {
-        super(datastore, TABLE_NAME, ATTRIB_MID, ATTRIB_TIME, PHENOMENONS);
+        super(datastore, TABLE_NAME, ATTRIB_MID, ATTRIB_TIME, FEATURE_ATTRIBUTES);
     }
 
     @Override

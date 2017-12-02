@@ -54,6 +54,7 @@ public abstract class AbstractFeatureStore<T> {
     /**
      * Constructor.
      *
+     * @param datastore
      * @param tableName
      * @param primaryKey
      * @param schema
@@ -62,30 +63,13 @@ public abstract class AbstractFeatureStore<T> {
         this(datastore, tableName, primaryKey, null, schema);
     }
 
-    public AbstractFeatureStore(DataStore datastore, String tableName, String primaryKey, String timeKey, List<String> schema) {
+    public AbstractFeatureStore(DataStore datastore, String tableName, String primaryKey, String timeKey,
+            List<String> schema) {
         this.datastore = datastore;
         this.tableName = tableName;
         this.primaryKey = primaryKey;
-
-        System.out.println("creating feature type");
         this.featureType = createSimpleFeatureType(schema, timeKey);
-
-        System.out.println("creating feature builder");
         this.featureBuilder = new SimpleFeatureBuilder(this.featureType);
-
-        try {
-
-            System.out.println("creating schema");
-            this.datastore.createSchema(this.featureType);
-            System.out.println("created");
-        } catch (IOException ex) {
-            System.out.println(String.format("Unable to create schema for %s.", tableName));
-            System.out.println(ex.getStackTrace());
-            LOGGER.error(String.format("Unable to create schema for %s.", tableName));
-            throw new RuntimeException(ex);
-        } catch (Exception ex){
-            ex.printStackTrace();
-        }
     }
 
     public String getTableName() {
@@ -94,6 +78,15 @@ public abstract class AbstractFeatureStore<T> {
 
     public SimpleFeatureType getSimpleFeatureType() {
         return this.featureType;
+    }
+
+    public void createTable() {
+        try {
+            this.datastore.createSchema(this.featureType);
+        } catch (Exception ex) {
+            LOGGER.error(String.format("Unable to create schema for %s.", tableName));
+            throw new RuntimeException(ex);
+        }
     }
 
     public T getByFeatureID(String id) {

@@ -5,6 +5,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
+import org.geotools.geometry.jts.JTSFactoryFinder;
 
 /**
  *
@@ -47,30 +49,36 @@ public class GeoMesaDataStoreModule extends AbstractModule implements GeoMesaCon
         return DataStoreFinder.getDataStore(geomesaConfig);
     }
 
+    @Provides
+    @Singleton
+    public GeometryFactory provideGeometryFactory() {
+        return JTSFactoryFinder.getGeometryFactory();
+    }
+
     @Override
     protected void configure() {
         if (this.geomesaConfig.isEmpty()) {
             try {
                 Properties p = getGeoMesaProperties();
-                if (p.contains(PROPERTY_INSTANCE_ID)) {
+                if (p.containsKey(PROPERTY_INSTANCE_ID)) {
                     geomesaConfig.put(PROPERTY_INSTANCE_ID, p.getProperty(PROPERTY_INSTANCE_ID));
                 }
-                if (p.contains(PROPERTY_ZOOKEEPERS)) {
+                if (p.containsKey(PROPERTY_ZOOKEEPERS)) {
                     geomesaConfig.put(PROPERTY_ZOOKEEPERS, p.getProperty(PROPERTY_ZOOKEEPERS));
                 }
-                if (p.contains(PROPERTY_USER)) {
+                if (p.containsKey(PROPERTY_USER)) {
                     geomesaConfig.put(PROPERTY_USER, p.getProperty(PROPERTY_USER));
                 }
-                if (p.contains(PROPERTY_PASSWORD)) {
+                if (p.containsKey(PROPERTY_PASSWORD)) {
                     geomesaConfig.put(PROPERTY_PASSWORD, p.getProperty(PROPERTY_PASSWORD));
                 }
-                if (p.contains(PROPERTY_AUTHS)) {
+                if (p.containsKey(PROPERTY_AUTHS)) {
                     geomesaConfig.put(PROPERTY_AUTHS, p.getProperty(PROPERTY_AUTHS));
                 }
-                if (p.contains(PROPERTY_VISIBILITY)) {
+                if (p.containsKey(PROPERTY_VISIBILITY)) {
                     geomesaConfig.put(PROPERTY_VISIBILITY, p.getProperty(PROPERTY_VISIBILITY));
                 }
-                if (p.contains(PROPERTY_TABLE_NAME)) {
+                if (p.containsKey(PROPERTY_TABLE_NAME)) {
                     geomesaConfig.put(PROPERTY_TABLE_NAME, p.getProperty(PROPERTY_TABLE_NAME));
                 }
             } catch (IOException ex) {
@@ -91,7 +99,7 @@ public class GeoMesaDataStoreModule extends AbstractModule implements GeoMesaCon
             try {
                 result.load(inputStream);
             } finally {
-                Closeables.closeQuietly(inputStream);
+                inputStream.close();
             }
         }
 
