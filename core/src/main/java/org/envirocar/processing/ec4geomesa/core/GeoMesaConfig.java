@@ -1,16 +1,19 @@
 package org.envirocar.processing.ec4geomesa.core;
 
-import com.google.inject.BindingAnnotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
  *
  * @author dewall
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.PARAMETER})
-@BindingAnnotation
-public @interface GeoMesaConfig {}
+public interface GeoMesaConfig {
+
+    String GEOMESACONFIG = "GeoMesaConfig";
+
+    String PROPERTY_INSTANCE_ID = "instanceId";
+    String PROPERTY_ZOOKEEPERS = "zookeepers";
+    String PROPERTY_USER = "user";
+    String PROPERTY_PASSWORD = "password";
+    String PROPERTY_AUTHS = "auths";
+    String PROPERTY_VISIBILITY = "visibilities";
+    String PROPERTY_TABLE_NAME = "tableName";
+
+}
