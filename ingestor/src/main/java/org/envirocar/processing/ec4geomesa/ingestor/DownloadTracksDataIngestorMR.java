@@ -2,6 +2,8 @@ package org.envirocar.processing.ec4geomesa.ingestor;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import java.io.IOException;
 import java.util.Map;
 import org.apache.commons.cli.BasicParser;
@@ -12,8 +14,8 @@ import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
-import org.envirocar.processing.ec4geomesa.core.DataStoreInstanceHandler;
-import org.envirocar.processing.ec4geomesa.core.GeoMesaStoreModule;
+import org.envirocar.processing.ec4geomesa.core.GeoMesaConfig;
+import org.envirocar.processing.ec4geomesa.core.GeoMesaDataStoreModule;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
 import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureStore;
 import org.envirocar.processing.ec4geomesa.ingestor.input.DownloadTracksInputFormat;
@@ -36,15 +38,17 @@ public class DownloadTracksDataIngestorMR {
         CommandLine cmd = parser.parse(options, args);
         int limit = getLimitOptionValue(cmd);
 
-        Map<String, String> datastoreConfig = DataStoreInstanceHandler.getDefaultDataStoreConf();
-        System.out.println("started");
-        Injector injector = Guice.createInjector(new GeoMesaStoreModule(datastoreConfig));
-        System.out.println("started");
-        DataStore instance = injector.getInstance(DataStore.class);
-        System.out.println("started");
-        injector.getInstance(MeasurementFeatureStore.class);
-        System.out.println("started");
-        injector.getInstance(TrackFeatureStore.class);
+        Injector injector = Guice.createInjector(new GeoMesaDataStoreModule());
+        Map<String, String> datastoreConfig = injector.getInstance(
+                Key.get(Map.class, Names.named(GeoMesaConfig.GEOMESACONFIG)));
+
+        TrackFeatureStore trackStore = injector
+                .getInstance(TrackFeatureStore.class);
+        trackStore.createTable();
+
+        MeasurementFeatureStore measurementStore = injector
+                .getInstance(MeasurementFeatureStore.class);
+        measurementStore.createTable();
 
         runIngestor(limit, datastoreConfig);
     }

@@ -1,18 +1,18 @@
 package org.envirocar.processing.ec4geomesa.ingestor;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.IOException;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
-import org.envirocar.processing.ec4geomesa.core.DataStoreInstanceHandler;
+import org.envirocar.processing.ec4geomesa.core.GeoMesaDataStoreModule;
 import org.envirocar.processing.ec4geomesa.core.decoding.EnvirocarJSONUtils;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
 import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureStore;
 import org.envirocar.processing.ec4geomesa.core.model.Track;
-import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.json.simple.parser.ParseException;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -24,17 +24,19 @@ public class TracksDataIngestorMapper extends Mapper<LongWritable, Text, Text, S
 
     private static final Logger LOG = Logger.getLogger(TracksDataIngestorMapper.class);
 
+    @Inject
     private GeometryFactory geometryFactory;
+    @Inject
     private TrackFeatureStore trackProfile;
+    @Inject
     private MeasurementFeatureStore measurementProfile;
 
     @Override
     protected void setup(Context context) throws IOException,
             InterruptedException {
         super.setup(context);
-        this.geometryFactory = JTSFactoryFinder.getGeometryFactory();
-        this.trackProfile = new TrackFeatureStore(null);
-        this.measurementProfile = new MeasurementFeatureStore(null);
+        Guice.createInjector(new GeoMesaDataStoreModule())
+                .injectMembers(this);
     }
 
     @Override

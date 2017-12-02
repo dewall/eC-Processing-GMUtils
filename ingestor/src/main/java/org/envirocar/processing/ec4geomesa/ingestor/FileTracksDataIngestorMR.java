@@ -17,6 +17,8 @@ package org.envirocar.processing.ec4geomesa.ingestor;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import java.util.Map;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -28,12 +30,11 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.envirocar.processing.ec4geomesa.core.DataStoreInstanceHandler;
-import org.envirocar.processing.ec4geomesa.core.GeoMesaStoreModule;
+import org.envirocar.processing.ec4geomesa.core.GeoMesaConfig;
+import org.envirocar.processing.ec4geomesa.core.GeoMesaDataStoreModule;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
 import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureStore;
 import org.envirocar.processing.ec4geomesa.ingestor.input.MRJsonInputFormat;
-import org.geotools.data.DataStore;
 import org.locationtech.geomesa.jobs.interop.mapreduce.GeoMesaOutputFormat;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -49,12 +50,17 @@ public class FileTracksDataIngestorMR {
         CommandLine cmd = parser.parse(options, args);
         String inputDir = cmd.getOptionValue("inputDir");
 
-        Map<String, String> datastoreConfig = DataStoreInstanceHandler.getDefaultDataStoreConf();
+        Injector injector = Guice.createInjector(new GeoMesaDataStoreModule());
+        Map<String, String> datastoreConfig = injector.getInstance(
+                Key.get(Map.class, Names.named(GeoMesaConfig.GEOMESACONFIG)));
 
-        Injector injector = Guice.createInjector(new GeoMesaStoreModule(datastoreConfig));
-        DataStore instance = injector.getInstance(DataStore.class);
-        injector.getInstance(MeasurementFeatureStore.class);
-        injector.getInstance(TrackFeatureStore.class);
+        TrackFeatureStore trackStore = injector
+                .getInstance(TrackFeatureStore.class);
+        trackStore.createTable();
+
+        MeasurementFeatureStore measurementStore = injector
+                .getInstance(MeasurementFeatureStore.class);
+        measurementStore.createTable();
 
         runIngestor(inputDir, datastoreConfig);
     }
