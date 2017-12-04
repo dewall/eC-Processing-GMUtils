@@ -120,14 +120,17 @@ public abstract class AbstractFeatureStore<T> {
         return null;
     }
 
-    private SimpleFeature fetchSingle(Filter filter) throws IOException {
+    protected SimpleFeature fetchSingle(Filter filter) throws IOException {
         SimpleFeatureCollection features = fetch(filter);
         return !features.isEmpty() ? features.features().next() : null;
     }
 
-    private SimpleFeatureCollection fetch(Filter filter) throws IOException {
-        SimpleFeatureSource featureSource = this.datastore.getFeatureSource(tableName);
-        return featureSource.getFeatures(filter);
+    protected SimpleFeatureCollection fetch(Filter filter) throws IOException {
+        return getFeatureSource().getFeatures(filter);
+    }
+
+    protected SimpleFeatureSource getFeatureSource() throws IOException {
+        return this.datastore.getFeatureSource(tableName);
     }
 
     protected SimpleFeatureType createSimpleFeatureType(List<String> schema, String timeKey) {
