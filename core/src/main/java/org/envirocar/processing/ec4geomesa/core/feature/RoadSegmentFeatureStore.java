@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.RoadSegment;
 import org.geotools.data.DataStore;
+import org.geotools.data.DataUtilities;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
 import org.geotools.data.simple.SimpleFeatureStore;
@@ -51,6 +52,17 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
     @Inject
     public RoadSegmentFeatureStore(DataStore datastore) {
         super(datastore, TABLE_NAME, ATTRIBUTE_OSMID, FEATURE_ATTRIBUTES);
+    }
+
+    public void store(RoadSegment segment) {
+        try {
+            SimpleFeature roadFeature = createFeatureFromEntity(segment);
+            SimpleFeatureStore store = (SimpleFeatureStore) getFeatureSource();
+            store.addFeatures(DataUtilities.collection(roadFeature));
+        } catch (IOException ex) {
+            LOGGER.error(String.format("Error while storing segment with id=%s",
+                    "" + segment.getOsmId()), ex);
+        }
     }
 
     public void update(RoadSegment segment) {
@@ -105,7 +117,7 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
                     segment.getOsmId()), e);
         }
     }
-
+    
     @Override
     protected SimpleFeature createFeatureFromEntity(RoadSegment t) {
         SimpleFeature sf = featureBuilder.buildFeature(String.valueOf(t.getOsmId()));
@@ -141,7 +153,7 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
                 double sumValue = (double) sf.getAttribute(("sum" + phenomenon).replace(" ", ""));
                 double avgValue = (double) sf.getAttribute(("avg" + phenomenon).replace(" ", ""));
                 int numValue = (int) sf.getAttribute(("num" + phenomenon).replace(" ", ""));
-                result.addValue(phenomenon, sumValue, avgValue, numValue);
+                result.setValue(phenomenon, sumValue, avgValue, numValue);
             }
         }
 
