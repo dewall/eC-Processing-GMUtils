@@ -1,13 +1,14 @@
 package org.envirocar.processing.ec4geomesa.core.feature;
 
 import com.google.common.base.Joiner;
-import com.google.inject.Inject;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.SchemaException;
@@ -19,6 +20,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.sort.SortBy;
 
 /**
  *
@@ -130,6 +132,21 @@ public abstract class AbstractFeatureStore<T> {
             LOGGER.error(String.format("Error while creating FeatureType for Table %s", tableName), ex);
         }
         return null;
+    }
+
+    protected List<T> createEntitiesFromFeatures(SimpleFeatureCollection sfc) {
+        List<T> result = new ArrayList<>();
+
+        sfc.sort(SortBy.NATURAL_ORDER);
+        SimpleFeatureIterator features = sfc.features();
+
+        while (features.hasNext()) {
+            SimpleFeature feature = features.next();
+            T entity = createEntityFromFeature(feature);
+            result.add(entity);
+        }
+
+        return result;
     }
 
     protected abstract T createEntityFromFeature(SimpleFeature sf);

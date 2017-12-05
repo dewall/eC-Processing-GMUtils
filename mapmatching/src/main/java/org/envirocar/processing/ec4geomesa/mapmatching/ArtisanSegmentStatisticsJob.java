@@ -29,11 +29,13 @@ public class ArtisanSegmentStatisticsJob {
     }
 
     private void runJob() {
-
+        roadsegmentStore.createTable();
+        
+        
     }
 
     public static void main(String[] args) {
-        Injector injector = Guice.createInjector(new GeoMesaDataStoreModule());
+        Injector injector = Guice.createInjector(new GeoMesaDataStoreModule(), new MapMatcherModule());
         ArtisanSegmentStatisticsJob instance = injector.getInstance(ArtisanSegmentStatisticsJob.class);
         instance.runJob();
     }

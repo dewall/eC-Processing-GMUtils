@@ -24,9 +24,9 @@ import org.json.JSONException;
  *
  * @author dewall
  */
-public class BarefootMatcherModule extends AbstractModule implements BarefootConfig {
+public class MapMatcherModule extends AbstractModule implements BarefootConfig {
 
-    private static final Logger LOGGER = Logger.getLogger(BarefootMatcherModule.class);
+    private static final Logger LOGGER = Logger.getLogger(MapMatcherModule.class);
     private static final String PROPERTIES_FILE = "barefoot.properties";
 
     private final Map<String, String> barefootConfig;
@@ -34,7 +34,7 @@ public class BarefootMatcherModule extends AbstractModule implements BarefootCon
     /**
      * Constructor.
      */
-    public BarefootMatcherModule() {
+    public MapMatcherModule() {
         this(null);
     }
 
@@ -43,7 +43,7 @@ public class BarefootMatcherModule extends AbstractModule implements BarefootCon
      *
      * @param barefootConfig
      */
-    public BarefootMatcherModule(Map<String, String> barefootConfig) {
+    public MapMatcherModule(Map<String, String> barefootConfig) {
         this.barefootConfig = barefootConfig;
     }
 
@@ -73,6 +73,7 @@ public class BarefootMatcherModule extends AbstractModule implements BarefootCon
                     barefootConfig.put(PROPERTY_PG_PW, p.getProperty(PROPERTY_PG_PW));
                 }
 
+                // Matcher Parameters
                 if (p.containsKey(PROPERTY_MM_SIGMA)) {
                     barefootConfig.put(PROPERTY_MM_SIGMA, p.getProperty(PROPERTY_MM_SIGMA));
                 }
@@ -86,7 +87,6 @@ public class BarefootMatcherModule extends AbstractModule implements BarefootCon
                     barefootConfig.put(PROPERTY_MM_MAXRADIUS, p.getProperty(PROPERTY_MM_SIGMA));
                 }
 
-                // Matcher Parameters
             } catch (IOException ex) {
                 LOGGER.error("Error while reading geomesa.properties.", ex);
             }

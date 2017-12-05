@@ -1,6 +1,5 @@
 package org.envirocar.processing.ec4geomesa.core.feature;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.LineString;
@@ -10,10 +9,7 @@ import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.CarSensor;
 import org.envirocar.processing.ec4geomesa.core.model.Track;
 import org.geotools.data.DataStore;
-import org.geotools.data.DataUtilities;
-import org.geotools.feature.SchemaException;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  *
@@ -49,14 +45,18 @@ public class TrackFeatureStore extends AbstractFeatureStore<Track> {
             "*geom:LineString:srid=4326"
     );
 
+    private final MeasurementFeatureStore measurementStore;
+
     /**
      * Constructor.
      *
      * @param datastore
+     * @param measurementStore
      */
     @Inject
-    public TrackFeatureStore(DataStore datastore) {
+    public TrackFeatureStore(DataStore datastore, MeasurementFeatureStore measurementStore) {
         super(datastore, TABLE_NAME, ATTRIB_TRACKID, ATTRIB_STARTTIME, FEATURE_ATTRIBUTES);
+        this.measurementStore = measurementStore;
     }
 
     @Override
@@ -100,6 +100,14 @@ public class TrackFeatureStore extends AbstractFeatureStore<Track> {
         s.setEngineDisplacement((int) sf.getAttribute(ATTRIB_ENGINEDISPLACEMENT));
         track.setCarSensor(s);
 
+        return track;
+    }
+
+    public Track getByID(String tackId, boolean fetchMeasurements) {
+        Track track = getByID(tackId);
+        if (fetchMeasurements) {
+            return measurementStore.fetchTrack(track);
+        }
         return track;
     }
 

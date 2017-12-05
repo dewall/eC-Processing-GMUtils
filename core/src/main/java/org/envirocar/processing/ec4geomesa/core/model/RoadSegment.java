@@ -65,7 +65,29 @@ public class RoadSegment {
         return (Integer) getValue(this.numValues, key);
     }
 
-    public void addValue(String key, double sumValue, double avgValue, int numValue) {
+    public void addPhenomenons(Map<String, Double> phenomenons) {
+        phenomenons.entrySet()
+                .stream()
+                .forEach(e -> addValue(e.getKey(), e.getValue()));
+    }
+
+    public void addValue(String key, double value) {
+        if (this.sumValues.containsKey(key) && this.avgValues.containsKey(key) && this.numValues.containsKey(key)) {
+            Double sumValue = this.sumValues.get(key);
+            this.sumValues.put(key, sumValue + value);
+
+            Integer numValue = this.numValues.get(key);
+            numValue++;
+            this.numValues.put(key, numValue);
+
+            Double avgValue = this.avgValues.get(key);
+            this.avgValues.put(key, sumValue / numValue);
+        } else {
+            this.setValue(key, value, value, 1);
+        }
+    }
+
+    public void setValue(String key, double sumValue, double avgValue, int numValue) {
         this.sumValues.put(key, sumValue);
         this.avgValues.put(key, avgValue);
         this.numValues.put(key, numValue);
