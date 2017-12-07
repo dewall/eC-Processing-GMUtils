@@ -18,12 +18,15 @@ package org.envirocar.processing.ec4geomesa.core.feature;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.LineString;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.CarSensor;
 import org.envirocar.processing.ec4geomesa.core.model.Track;
 import org.geotools.data.DataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 
 /**
@@ -124,6 +127,15 @@ public class TrackFeatureStore extends AbstractFeatureStore<Track> {
             return measurementStore.fetchTrack(track);
         }
         return track;
+    }
+
+    public SimpleFeatureCollection getAllTracks() {
+        try {
+            return this.datastore.getFeatureSource(getTableName()).getFeatures();
+        } catch (IOException ex) {
+            LOGGER.error("Error while querying all Tracks", ex);
+        }
+        return null;
     }
 
 }
