@@ -89,7 +89,7 @@ public class TrackFeatureStore extends AbstractFeatureStore<Track> {
     protected Track createEntityFromFeature(SimpleFeature sf) {
         String trackId = (String) sf.getAttribute(ATTRIB_TRACKID);
         Track track = new Track(trackId);
-        track.setLength((double) sf.getAttribute(ATTRIB_LENGTH));
+        track.setLength((float) sf.getAttribute(ATTRIB_LENGTH));
         track.setStartingTime((Date) sf.getAttribute(ATTRIB_STARTTIME));
         track.setEndingTime((Date) sf.getAttribute(ATTRIB_ENDTIME));
         track.setLineString((LineString) sf.getDefaultGeometry());
