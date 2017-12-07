@@ -14,6 +14,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
@@ -27,7 +28,7 @@ import org.json.JSONException;
 public class MapMatcherModule extends AbstractModule implements BarefootConfig {
 
     private static final Logger LOGGER = Logger.getLogger(MapMatcherModule.class);
-    private static final String PROPERTIES_FILE = "barefoot.properties";
+    private static final String PROPERTIES_FILE = "/barefoot.properties";
 
     private final Map<String, String> barefootConfig;
 
@@ -35,7 +36,7 @@ public class MapMatcherModule extends AbstractModule implements BarefootConfig {
      * Constructor.
      */
     public MapMatcherModule() {
-        this(null);
+        this(new HashMap<>());
     }
 
     /**

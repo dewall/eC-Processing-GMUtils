@@ -108,7 +108,7 @@ public abstract class AbstractFeatureStore<T> {
 
     public T getByID(String id) {
         try {
-            Filter filter = CQL.toFilter(String.format("%s = %s", this.primaryKey, id));
+            Filter filter = CQL.toFilter(String.format("%s = '%s'", this.primaryKey, id));
             SimpleFeature feature = fetchSingle(filter);
 
             if (feature != null) {
@@ -139,8 +139,7 @@ public abstract class AbstractFeatureStore<T> {
         try {
             SimpleFeatureType featureType = DataUtilities.createType(tableName, Joiner.on(",").join(schema));
             if (timeKey != null) {
-                featureType.getUserData().put(
-                        SimpleFeatureTypes.DEFAULT_DATE_KEY, timeKey);
+                featureType.getUserData().put(SimpleFeatureTypes.DEFAULT_DATE_KEY, timeKey);
             }
             return featureType;
         } catch (SchemaException ex) {

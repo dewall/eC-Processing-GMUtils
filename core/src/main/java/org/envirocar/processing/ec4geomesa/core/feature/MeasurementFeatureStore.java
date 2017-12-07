@@ -75,14 +75,14 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
     private static final List<String> FEATURE_ATTRIBUTES = Lists.newArrayList(
             "MeasurementID:String",
             "TrackID:String",
-            "Time:Date",
-            "*geom:Point:srid=4326"
+            "Time:Date"
     );
 
     static {
         PHENOMENONS.forEach(p -> {
             FEATURE_ATTRIBUTES.add(p + ":Double");
         });
+        FEATURE_ATTRIBUTES.add("*geom:Point:srid=4326");
     }
 
     /**
@@ -113,7 +113,6 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
                 forEach((phenomenon) -> {
                     sf.setAttribute(phenomenon.getKey(), phenomenon.getValue());
                 });
-
         return sf;
     }
 
