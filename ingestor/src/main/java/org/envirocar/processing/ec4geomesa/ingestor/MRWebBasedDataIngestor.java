@@ -27,7 +27,7 @@ import org.opengis.feature.simple.SimpleFeature;
  *
  * @author dewall
  */
-public class DownloadTracksDataIngestorMR {
+public class MRWebBasedDataIngestor {
 
     public static final String OPTION_LIMIT = "limit";
     public static final int OPTION_LIMIT_DEFAULT = 100;
@@ -74,7 +74,7 @@ public class DownloadTracksDataIngestorMR {
 
         Job job = Job.getInstance(config);
         job.setJobName("GeoMesa enviroCar Ingestion");
-        job.setJarByClass(DownloadTracksDataIngestorMR.class);
+        job.setJarByClass(MRWebBasedDataIngestor.class);
 
         job.setMapperClass(TracksDataIngestorMapper.class);
         job.setInputFormatClass(DownloadTracksInputFormat.class);

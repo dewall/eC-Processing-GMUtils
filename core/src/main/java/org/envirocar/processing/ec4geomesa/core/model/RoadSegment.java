@@ -71,19 +71,32 @@ public class RoadSegment {
                 .forEach(e -> addValue(e.getKey(), e.getValue()));
     }
 
+    public void addValue(RoadSegment other) {
+        Map<String, Double> otherSumValues = other.getSummedValues();
+        Map<String, Double> otherAvgValues = other.getAvgValues();
+        Map<String, Integer> otherNumValues = other.getNumValues();
+
+        other.getAvgValues().keySet()
+                .forEach(key -> this.addValue(key, otherSumValues.get(key), otherNumValues.get(key)));
+    }
+
     public void addValue(String key, double value) {
+        this.addValue(key, value, 1);
+    }
+
+    public void addValue(String key, double value, int numValues) {
         if (this.sumValues.containsKey(key) && this.avgValues.containsKey(key) && this.numValues.containsKey(key)) {
             Double sumValue = this.sumValues.get(key);
             this.sumValues.put(key, sumValue + value);
 
             Integer numValue = this.numValues.get(key);
-            numValue++;
+            numValue += numValues;
             this.numValues.put(key, numValue);
 
             Double avgValue = this.avgValues.get(key);
             this.avgValues.put(key, sumValue / numValue);
         } else {
-            this.setValue(key, value, value, 1);
+            this.setValue(key, value, value, numValues);
         }
     }
 

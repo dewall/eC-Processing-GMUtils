@@ -16,7 +16,7 @@ import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.decoding.EnvirocarJSONUtils;
-import org.envirocar.processing.ec4geomesa.ingestor.DownloadTracksDataIngestorMR;
+import org.envirocar.processing.ec4geomesa.ingestor.MRWebBasedDataIngestor;
 import org.json.simple.parser.ParseException;
 
 /**
@@ -33,8 +33,8 @@ public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
 
     @Override
     public List<InputSplit> getSplits(JobContext jc) throws IOException, InterruptedException {
-        int limit = jc.getConfiguration().getInt(DownloadTracksDataIngestorMR.OPTION_LIMIT,
-                DownloadTracksDataIngestorMR.OPTION_LIMIT_DEFAULT);
+        int limit = jc.getConfiguration().getInt(MRWebBasedDataIngestor.OPTION_LIMIT,
+                MRWebBasedDataIngestor.OPTION_LIMIT_DEFAULT);
         LOG.info(String.format("Getting splits for the latest %s tracks.", "" + limit));
 
         Request request = new Request.Builder()

@@ -27,7 +27,7 @@ import org.opengis.feature.simple.SimpleFeature;
  *
  * @author dewall
  */
-public class FileTracksDataIngestorMR {
+public class MRFileBasedDataIngestor {
 
     public static void main(String[] args) throws Exception {
         Options options = getCLOptions();
@@ -64,7 +64,7 @@ public class FileTracksDataIngestorMR {
 
         Job job = Job.getInstance(config);
         job.setJobName("GeoMesa enviroCar Ingest");
-        job.setJarByClass(FileTracksDataIngestorMR.class);
+        job.setJarByClass(MRFileBasedDataIngestor.class);
 
         job.setMapperClass(TracksDataIngestorMapper.class);
         job.setInputFormatClass(MRJsonInputFormat.class);

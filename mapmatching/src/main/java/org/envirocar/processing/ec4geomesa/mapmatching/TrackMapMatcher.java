@@ -45,7 +45,7 @@ public class TrackMapMatcher {
      * @param track
      * @return
      */
-    public Map<Long, RoadSegment> matchTrack(Track track) {
+    public Map<Long, RoadSegment> computeSegmentStatistics(Track track) {
         Map<Long, RoadSegment> result = new HashMap<>();
 
         // setup map of measurements
