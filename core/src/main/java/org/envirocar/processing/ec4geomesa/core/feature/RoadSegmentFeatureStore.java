@@ -81,7 +81,7 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
                         .entrySet()
                         .stream()
                         .forEach(c -> {
-                            keys.add(c.getKey());
+                            keys.add("avg" + c.getKey());
                             values.add(c.getValue());
                         });
 
@@ -89,7 +89,7 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
                         .entrySet()
                         .stream()
                         .forEach(c -> {
-                            keys.add(c.getKey());
+                            keys.add("sum" + c.getKey());
                             values.add(c.getValue());
                         });
 
@@ -97,12 +97,11 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
                         .entrySet()
                         .stream()
                         .forEach(c -> {
-                            keys.add(c.getKey());
+                            keys.add("num" + c.getKey());
                             values.add(c.getValue());
                         });
 
-                store.modifyFeatures(keys.toArray(new String[keys.size()]),
-                        values.toArray(), filter);
+                store.modifyFeatures(keys.toArray(new String[keys.size()]), values.toArray(), filter);
                 transaction.commit();
             } catch (IOException e) {
                 LOGGER.error(String.format("Error while updating OSM segment %s", segment.getOsmId()), e);
@@ -116,8 +115,8 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
             LOGGER.error(String.format("Error while rolling back or closing transaction while updating OSM segment %s",
                     segment.getOsmId()), e);
         }
-    }
-    
+    }   
+
     @Override
     protected SimpleFeature createFeatureFromEntity(RoadSegment t) {
         SimpleFeature sf = featureBuilder.buildFeature(String.valueOf(t.getOsmId()));

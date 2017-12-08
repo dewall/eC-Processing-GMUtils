@@ -87,7 +87,7 @@ public class MRWebBasedDataIngestor {
         GeoMesaOutputFormat.configureDataStore(job, datastoreConfig);
 
         job.submit();
-        System.out.println("submitted");
+
         if (!job.waitForCompletion(true)) {
             throw new Exception("Job execution failed...");
         }
