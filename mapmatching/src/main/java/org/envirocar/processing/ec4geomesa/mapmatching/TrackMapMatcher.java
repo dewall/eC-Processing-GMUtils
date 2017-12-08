@@ -6,15 +6,14 @@ import com.bmwcarit.barefoot.matcher.MatcherKState;
 import com.bmwcarit.barefoot.matcher.MatcherSample;
 import com.bmwcarit.barefoot.road.BaseRoad;
 import com.google.inject.Inject;
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.Measurement;
 import org.envirocar.processing.ec4geomesa.core.model.RoadSegment;
 import org.envirocar.processing.ec4geomesa.core.model.Track;
@@ -25,19 +24,24 @@ import org.envirocar.processing.ec4geomesa.core.model.Track;
  */
 public class TrackMapMatcher {
 
+    private static final Logger LOGGER = Logger.getLogger(TrackMapMatcher.class);
+
     private final Matcher matcher;
     private final GeometryFactory factory;
+    private final OSMWayFetcher wayFetcher;
 
     /**
      * Constructor.
      *
      * @param matcher the barefoot matcher which is handling the map matching process.
      * @param factory the geometry factory.
+     * @param wayFetcher
      */
     @Inject
-    public TrackMapMatcher(Matcher matcher, GeometryFactory factory) {
+    public TrackMapMatcher(Matcher matcher, GeometryFactory factory, OSMWayFetcher wayFetcher) {
         this.matcher = matcher;
         this.factory = factory;
+        this.wayFetcher = wayFetcher;
     }
 
     /**
@@ -61,12 +65,15 @@ public class TrackMapMatcher {
                 .collect(Collectors.toList());
 
         // map match
-        MatcherKState state = matcher.mmatch(samples, 1, 5000);
+        MatcherKState state = matcher.mmatch(samples, 15, 4000);
 
         List<MatcherSample> matcherSamples = state.samples();
         List<MatcherCandidate> matcherSequence = state.sequence();
 
         if (matcherSamples != null && matcherSequence != null) {
+            LOGGER.info("TrackID -> " + track.getId()
+                    + ", Measurements -> " + measurementMap.size()
+                    + ", MatcherSamples -> " + matcherSamples.size());
             for (int i = 0, size = matcherSamples.size(); i < size; i++) {
                 MatcherSample matcherSample = matcherSamples.get(i);
                 MatcherCandidate matcherCandidate = matcherSequence.get(i);
@@ -77,7 +84,8 @@ public class TrackMapMatcher {
 
                 RoadSegment roadSegment = result.get(osmid);
                 if (roadSegment == null) {
-                    roadSegment = new RoadSegment(osmid.intValue(), convertToJTSLineString(edge.geometry()));
+                    LineString waygeometry = (LineString) wayFetcher.fetchOSMWayGeometry(osmid);
+                    roadSegment = new RoadSegment(osmid.intValue(), waygeometry);
                     result.put(osmid, roadSegment);
                 }
                 roadSegment.addPhenomenons(measurement.getPhenomenons());
@@ -91,17 +99,4 @@ public class TrackMapMatcher {
         return new com.esri.core.geometry.Point(point.getX(), point.getY());
     }
 
-    private LineString convertToJTSLineString(com.esri.core.geometry.Polyline polyline) {
-        List<Coordinate> coords = new ArrayList<>();
-
-        for (int i = 0; i < polyline.getPointCount(); i++) {
-            com.esri.core.geometry.Point point = polyline.getPoint(i);
-            Coordinate coord = new Coordinate();
-            coord.x = point.getX();
-            coord.y = point.getY();
-            coords.add(coord);
-        }
-
-        return factory.createLineString(coords.toArray(new Coordinate[coords.size()]));
-    }
 }
