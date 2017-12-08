@@ -21,6 +21,7 @@ import com.vividsolutions.jts.geom.Point;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -127,6 +128,17 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
         Date time = (Date) sf.getAttribute(ATTRIB_TIME);
         Point point = (Point) sf.getDefaultGeometry();
         Measurement m = new Measurement(mID, tID, point, time);
+
+        Map<String, Double> phenomenons = new HashMap<>();
+        PHENOMENONS.forEach(p -> {
+            Object attr = sf.getAttribute(p);
+            if (attr != null) {
+                double attribute = (double) attr;
+                phenomenons.put(p, attribute);
+            }
+
+        });
+        m.setPhenomenons(phenomenons);
 
         return m;
     }
