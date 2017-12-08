@@ -3,9 +3,7 @@ package org.envirocar.processing.ec4geomesa.mapmatching;
 import com.bmwcarit.barefoot.matcher.Matcher;
 import com.bmwcarit.barefoot.road.PostGISReader;
 import com.bmwcarit.barefoot.roadmap.Loader;
-import com.bmwcarit.barefoot.roadmap.Road;
 import com.bmwcarit.barefoot.roadmap.RoadMap;
-import com.bmwcarit.barefoot.roadmap.RoadPoint;
 import com.bmwcarit.barefoot.roadmap.TimePriority;
 import com.bmwcarit.barefoot.spatial.Geography;
 import com.bmwcarit.barefoot.topology.Dijkstra;
@@ -13,6 +11,8 @@ import com.bmwcarit.barefoot.util.Tuple;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.io.WKBReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,14 +92,16 @@ public class MapMatcherModule extends AbstractModule implements BarefootConfig {
                 LOGGER.error("Error while reading geomesa.properties.", ex);
             }
         }
+
+        bind(OSMWayFetcher.class).to(OSMPostGISReader.class);
     }
 
     @Provides
     @Singleton
-    public PostGISReader providePostGISReader() throws JSONException, IOException {
+    public OSMPostGISReader providePostGISReader() throws JSONException, IOException {
         Map<Short, Tuple<Double, Integer>> read = Loader.read(
                 "src/main/resources/road-types.json");
-        return new PostGISReader(
+        return new OSMPostGISReader(
                 barefootConfig.get(PROPERTY_PG_HOST),
                 Integer.parseInt(barefootConfig.get(PROPERTY_PG_PORT)),
                 barefootConfig.get(PROPERTY_PG_DATABASE),
@@ -111,7 +113,7 @@ public class MapMatcherModule extends AbstractModule implements BarefootConfig {
 
     @Provides
     @Singleton
-    public RoadMap provideRoadMap(PostGISReader reader) {
+    public RoadMap provideRoadMap(OSMPostGISReader reader) {
         return RoadMap.Load(reader).construct();
     }
 
@@ -137,6 +139,12 @@ public class MapMatcherModule extends AbstractModule implements BarefootConfig {
         }
 
         return matcher;
+    }
+
+    @Provides
+    @Singleton
+    public WKBReader provideWKBReader() {
+        return new WKBReader();
     }
 
 }
