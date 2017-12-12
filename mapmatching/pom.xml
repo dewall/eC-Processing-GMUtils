@@ -12,6 +12,10 @@
     
     <name>enviroCar Processing - eC4GeoMesa (MapMatcher)</name>
     
+    <properties>
+        <barefoot.version>0.1.1</barefoot.version>
+    </properties>
+    
     <dependencies>
         <!-- Dependencies to other Modules -->
         <dependency>
@@ -64,6 +68,13 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
+        </dependency>
+        
+        <!-- MapMatcher -->
+        <dependency>
+            <groupId>com.bmw-carit</groupId>
+            <artifactId>barefoot</artifactId>
+            <version>${barefoot.version}</version>
         </dependency>
         
         <!-- Testing libs -->
