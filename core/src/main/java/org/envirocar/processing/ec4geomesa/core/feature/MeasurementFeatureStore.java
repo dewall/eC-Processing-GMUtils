@@ -3,13 +3,19 @@ package org.envirocar.processing.ec4geomesa.core.feature;
 import com.beust.jcommander.internal.Lists;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.Point;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.Measurement;
+import org.envirocar.processing.ec4geomesa.core.model.Track;
 import org.geotools.data.DataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.cql2.CQLException;
 import org.opengis.feature.simple.SimpleFeature;
 
 /**
@@ -55,14 +61,14 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
     private static final List<String> FEATURE_ATTRIBUTES = Lists.newArrayList(
             "MeasurementID:String",
             "TrackID:String",
-            "Time:Date",
-            "*geom:Point:srid=4326"
+            "Time:Date"
     );
 
     static {
         PHENOMENONS.forEach(p -> {
             FEATURE_ATTRIBUTES.add(p + ":Double");
         });
+        FEATURE_ATTRIBUTES.add("*geom:Point:srid=4326");
     }
 
     /**
@@ -93,7 +99,6 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
                 forEach((phenomenon) -> {
                     sf.setAttribute(phenomenon.getKey(), phenomenon.getValue());
                 });
-
         return sf;
     }
 
@@ -109,7 +114,31 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
         Point point = (Point) sf.getDefaultGeometry();
         Measurement m = new Measurement(mID, tID, point, time);
 
+        Map<String, Double> phenomenons = new HashMap<>();
+        PHENOMENONS.forEach(p -> {
+            Object attr = sf.getAttribute(p);
+            if (attr != null) {
+                double attribute = (double) attr;
+                phenomenons.put(p, attribute);
+            }
+
+        });
+        m.setPhenomenons(phenomenons);
+
         return m;
+    }
+
+    public Track fetchTrack(Track track) {
+        try {
+            SimpleFeatureCollection sfc = fetch(CQL.toFilter("TrackID = '" + track.getId() + "'"));
+            List<Measurement> measurements = createEntitiesFromFeatures(sfc);
+            track.setMeasurements(measurements);
+        } catch (CQLException ex) {
+            LOG.error("Error creating Filter", ex);
+        } catch (IOException ex) {
+            LOG.error(String.format("Error while getting measurements for track=%s", track.getId()), ex);
+        }
+        return track;
     }
 
 }

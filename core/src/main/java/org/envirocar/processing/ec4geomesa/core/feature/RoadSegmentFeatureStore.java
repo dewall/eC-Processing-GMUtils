@@ -3,12 +3,21 @@ package org.envirocar.processing.ec4geomesa.core.feature;
 import com.beust.jcommander.internal.Lists;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.LineString;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.RoadSegment;
 import org.geotools.data.DataStore;
+import org.geotools.data.DataUtilities;
+import org.geotools.data.DefaultTransaction;
+import org.geotools.data.Transaction;
+import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.cql2.CQLException;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.Filter;
 
 /**
  *
@@ -45,6 +54,69 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
         super(datastore, TABLE_NAME, ATTRIBUTE_OSMID, FEATURE_ATTRIBUTES);
     }
 
+    public void store(RoadSegment segment) {
+        try {
+            SimpleFeature roadFeature = createFeatureFromEntity(segment);
+            SimpleFeatureStore store = (SimpleFeatureStore) getFeatureSource();
+            store.addFeatures(DataUtilities.collection(roadFeature));
+        } catch (IOException ex) {
+            LOGGER.error(String.format("Error while storing segment with id=%s",
+                    "" + segment.getOsmId()), ex);
+        }
+    }
+
+    public void update(RoadSegment segment) {
+        Transaction transaction = new DefaultTransaction();
+        try {
+            try {
+                SimpleFeatureStore store = (SimpleFeatureStore) getFeatureSource();
+                store.setTransaction(transaction);
+
+                Filter filter = CQL.toFilter("OSMID = " + segment.getOsmId());
+
+                List<String> keys = new ArrayList<>();
+                List<Object> values = new ArrayList<>();
+
+                segment.getAvgValues()
+                        .entrySet()
+                        .stream()
+                        .forEach(c -> {
+                            keys.add("avg" + c.getKey());
+                            values.add(c.getValue());
+                        });
+
+                segment.getSummedValues()
+                        .entrySet()
+                        .stream()
+                        .forEach(c -> {
+                            keys.add("sum" + c.getKey());
+                            values.add(c.getValue());
+                        });
+
+                segment.getNumValues()
+                        .entrySet()
+                        .stream()
+                        .forEach(c -> {
+                            keys.add("num" + c.getKey());
+                            values.add(c.getValue());
+                        });
+
+                store.modifyFeatures(keys.toArray(new String[keys.size()]), values.toArray(), filter);
+                transaction.commit();
+            } catch (IOException e) {
+                LOGGER.error(String.format("Error while updating OSM segment %s", segment.getOsmId()), e);
+                transaction.rollback();
+            } catch (CQLException ex) {
+                LOGGER.error(ex);
+            } finally {
+                transaction.close();
+            }
+        } catch (IOException e) {
+            LOGGER.error(String.format("Error while rolling back or closing transaction while updating OSM segment %s",
+                    segment.getOsmId()), e);
+        }
+    }   
+
     @Override
     protected SimpleFeature createFeatureFromEntity(RoadSegment t) {
         SimpleFeature sf = featureBuilder.buildFeature(String.valueOf(t.getOsmId()));
@@ -80,7 +152,7 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
                 double sumValue = (double) sf.getAttribute(("sum" + phenomenon).replace(" ", ""));
                 double avgValue = (double) sf.getAttribute(("avg" + phenomenon).replace(" ", ""));
                 int numValue = (int) sf.getAttribute(("num" + phenomenon).replace(" ", ""));
-                result.addValue(phenomenon, sumValue, avgValue, numValue);
+                result.setValue(phenomenon, sumValue, avgValue, numValue);
             }
         }
 
