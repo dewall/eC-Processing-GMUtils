@@ -45,7 +45,7 @@ public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
             List<String> trackIds = new ArrayList<>();
             for (int i = 1; i <= numRequests; i++) {
                 Request request = new Request.Builder()
-                        .url(ENVIROCAR_TRACKS_URL + "?limit=" + limit + "&page=" + numRequests)
+                        .url(ENVIROCAR_TRACKS_URL + "?limit=" + limit + "&page=" + i)
                         .build();
 
                 Response response = client.newCall(request).execute();
