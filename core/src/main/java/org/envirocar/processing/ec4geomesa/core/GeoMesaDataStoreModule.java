@@ -59,7 +59,7 @@ public class GeoMesaDataStoreModule extends AbstractModule implements GeoMesaCon
     protected void configure() {
         if (this.geomesaConfig.isEmpty()) {
             try {
-                Properties p = getGeoMesaProperties();
+                Properties p = PropertiesUtils.getProperties(PROPERTIES_FILE);
                 if (p.containsKey(PROPERTY_INSTANCE_ID)) {
                     geomesaConfig.put(PROPERTY_INSTANCE_ID, p.getProperty(PROPERTY_INSTANCE_ID));
                 }
@@ -89,21 +89,6 @@ public class GeoMesaDataStoreModule extends AbstractModule implements GeoMesaCon
         bind(Map.class)
                 .annotatedWith(Names.named(GEOMESACONFIG))
                 .toInstance(geomesaConfig);
-    }
-
-    private Properties getGeoMesaProperties() throws IOException {
-        Properties result = new Properties();
-        InputStream inputStream = GeoMesaDataStoreModule.class.getResourceAsStream(PROPERTIES_FILE);
-
-        if (inputStream != null) {
-            try {
-                result.load(inputStream);
-            } finally {
-                inputStream.close();
-            }
-        }
-
-        return result;
     }
 
 }
