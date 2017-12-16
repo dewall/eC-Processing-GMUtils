@@ -20,6 +20,9 @@ import org.apache.log4j.Logger;
 public class OSMPostGISReader extends PostGISReader implements OSMWayFetcher {
 
     private static final Logger LOGGER = Logger.getLogger(OSMPostGISReader.class);
+    private static final String KEY_GEOM = "geom";
+
+    private final WKBReader wkbReader;
 
     /**
      * Constructs {@link PostGISReader} object.
@@ -31,10 +34,12 @@ public class OSMPostGISReader extends PostGISReader implements OSMWayFetcher {
      * @param user User for accessing the database.
      * @param password Password of the user.
      * @param config Road type configuration.
+     * @param wkbReader Reader for well-known binary.
      */
     public OSMPostGISReader(String host, int port, String database, String table, String user, String password,
-            Map<Short, Tuple<Double, Integer>> config) {
+            Map<Short, Tuple<Double, Integer>> config, WKBReader wkbReader) {
         super(host, port, database, table, user, password, config);
+        this.wkbReader = wkbReader;
     }
 
     @Override
@@ -42,18 +47,18 @@ public class OSMPostGISReader extends PostGISReader implements OSMWayFetcher {
         StringBuilder builder = new StringBuilder();
         builder.append("SELECT osm_id, ST_AsBinary(geom) as geom FROM bfmap_ways WHERE osm_id=");
         builder.append(osmId);
+        String query = builder.toString();
 
         Geometry fetchedLineString = null;
         try {
             this.open();
 
-            ResultSet execute = execute(builder.toString());
+            ResultSet resultSet = execute(query);
 
-            WKBReader reader = new WKBReader();
             LineMerger merger = new LineMerger();
-            while (execute.next()) {
-                byte[] wkb = execute.getBytes("geom");
-                Geometry geom = reader.read(wkb);
+            while (resultSet.next()) {
+                byte[] wkb = resultSet.getBytes(KEY_GEOM);
+                Geometry geom = wkbReader.read(wkb);
                 merger.add(geom);
             }
             Collection<Geometry> mergedLineStrings = merger.getMergedLineStrings();
