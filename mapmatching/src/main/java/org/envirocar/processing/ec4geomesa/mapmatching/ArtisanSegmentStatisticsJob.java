@@ -1,5 +1,6 @@
 package org.envirocar.processing.ec4geomesa.mapmatching;
 
+import com.beust.jcommander.Parameter;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -21,6 +22,8 @@ import org.opengis.feature.simple.SimpleFeature;
 public class ArtisanSegmentStatisticsJob {
 
     private static final Logger LOGGER = Logger.getLogger(ArtisanSegmentStatisticsJob.class);
+    
+    
 
     private final TrackFeatureStore trackStore;
     private final MeasurementFeatureStore measurementStore;
