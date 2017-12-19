@@ -1,25 +1,27 @@
 package org.envirocar.processing.ec4geomesa.mapmatching;
 
 import com.bmwcarit.barefoot.matcher.Matcher;
-import com.bmwcarit.barefoot.road.PostGISReader;
 import com.bmwcarit.barefoot.roadmap.Loader;
 import com.bmwcarit.barefoot.roadmap.RoadMap;
 import com.bmwcarit.barefoot.roadmap.TimePriority;
 import com.bmwcarit.barefoot.spatial.Geography;
 import com.bmwcarit.barefoot.topology.Dijkstra;
 import com.bmwcarit.barefoot.util.Tuple;
+import com.google.common.base.Charsets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.io.WKBReader;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.PropertiesUtils;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -99,8 +101,9 @@ public class MapMatcherModule extends AbstractModule implements BarefootConfig {
     @Provides
     @Singleton
     public OSMPostGISReader providePostGISReader() throws JSONException, IOException {
-        Map<Short, Tuple<Double, Integer>> read = Loader.read(
-                "src/main/resources/road-types.json");
+        StringWriter writer = new StringWriter();
+        IOUtils.copy(getClass().getResourceAsStream("/road-types.json"), writer, Charsets.UTF_8);
+        Map<Short, Tuple<Double, Integer>> read = Loader.roadtypes(new JSONObject(writer.toString()));
         return new OSMPostGISReader(
                 barefootConfig.get(PROPERTY_PG_HOST),
                 Integer.parseInt(barefootConfig.get(PROPERTY_PG_PORT)),
