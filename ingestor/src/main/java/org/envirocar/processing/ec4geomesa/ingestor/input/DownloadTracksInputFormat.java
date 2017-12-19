@@ -38,7 +38,7 @@ public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
         LOG.info(String.format("Getting splits for the latest %s tracks.", "" + limit));
 
         Request request = new Request.Builder()
-                .url(ENVIROCAR_TRACKS_URL + "?limit=" + limit)
+                .url(ENVIROCAR_TRACKS_URL + "?limit=" + limit + "&page=4")
                 .build();
 
         Response response = client.newCall(request).execute();
