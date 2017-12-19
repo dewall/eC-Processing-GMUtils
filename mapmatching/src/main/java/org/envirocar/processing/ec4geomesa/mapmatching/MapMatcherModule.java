@@ -100,7 +100,7 @@ public class MapMatcherModule extends AbstractModule implements BarefootConfig {
 
     @Provides
     @Singleton
-    public OSMPostGISReader providePostGISReader() throws JSONException, IOException {
+    public OSMPostGISReader providePostGISReader(WKBReader wkbReader) throws JSONException, IOException {
         StringWriter writer = new StringWriter();
         IOUtils.copy(getClass().getResourceAsStream("/road-types.json"), writer, Charsets.UTF_8);
         Map<Short, Tuple<Double, Integer>> read = Loader.roadtypes(new JSONObject(writer.toString()));
@@ -111,7 +111,7 @@ public class MapMatcherModule extends AbstractModule implements BarefootConfig {
                 barefootConfig.get(PROPERTY_PG_TABLE),
                 barefootConfig.get(PROPERTY_PG_USER),
                 barefootConfig.get(PROPERTY_PG_PW),
-                read);
+                read, wkbReader);
     }
 
     @Provides
