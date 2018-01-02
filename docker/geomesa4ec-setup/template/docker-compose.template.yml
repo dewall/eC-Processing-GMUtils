@@ -17,6 +17,8 @@ services:
       HADOOP_MASTER_ADDRESS: hdfs-name
     ports:
       - '50070:50070'
+    volumes:
+      - '__VOLUME-HDFS__:/var/lib/postgresql/data'
   hdfs-data:
     image: 'quay.io/geomesa/hdfs:geomesa-1.3.2-accumulo-1.8.1'
     command: data
@@ -36,7 +38,7 @@ services:
     environment:
       HADOOP_MASTER_ADDRESS: hdfs-name
       ZOOKEEPERS: zookeeper
-      ACCUMULO_PASSWORD: pass
+      ACCUMULO_PASSWORD: __ACUMMULO-PASS__
     depends_on:
       - zookeeper
   accumulo-monitor:
