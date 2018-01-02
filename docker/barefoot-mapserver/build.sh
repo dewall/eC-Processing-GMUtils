@@ -50,7 +50,6 @@ if [ $INGEST_OSM = "false" ]; then
 docker run -d \
     -v $scriptDir/data:/data \
     --name mapserver \
-    --env DATABASE=$mapserver_dbname
     ec-mapmatching/mapserver 
 
 # wait a certain amount of time for the database to be initialized...
