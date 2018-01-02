@@ -35,7 +35,11 @@ done
 
 
 # build docker image
-docker build -t="ec-mapmatching/mapserver" .
+docker build -t="ec-mapmatching/mapserver" 
+    --build-arg DATABASE=$mapserver_dbname
+    --build-arg USER=$mapserver_user
+    --build-arg PASSW=$mapserver_pass
+    .
 
 echo "Docker image has been successfully created";
 if [ $INGEST_OSM = "false" ]; then
@@ -46,6 +50,7 @@ if [ $INGEST_OSM = "false" ]; then
 docker run -d \
     -v $scriptDir/data:/data \
     --name mapserver \
+    --env DATABASE=$mapserver_dbname
     ec-mapmatching/mapserver 
 
 # wait a certain amount of time for the database to be initialized...
