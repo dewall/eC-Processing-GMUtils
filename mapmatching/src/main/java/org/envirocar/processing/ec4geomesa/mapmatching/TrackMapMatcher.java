@@ -12,6 +12,7 @@ import com.vividsolutions.jts.geom.Point;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.Measurement;
@@ -66,30 +67,37 @@ public class TrackMapMatcher {
 
         // map match
         MatcherKState state = matcher.mmatch(samples, 15, 4000);
+        if (state.isEmpty()) {
+            return null;
+        }
 
-        List<MatcherSample> matcherSamples = state.samples();
-        List<MatcherCandidate> matcherSequence = state.sequence();
+        try {
+            List<MatcherSample> matcherSamples = state.samples();
+            List<MatcherCandidate> matcherSequence = state.sequence();
 
-        if (matcherSamples != null && matcherSequence != null) {
-            LOGGER.info("TrackID -> " + track.getId()
-                    + ", Measurements -> " + measurementMap.size()
-                    + ", MatcherSamples -> " + matcherSamples.size());
-            for (int i = 0, size = matcherSamples.size(); i < size; i++) {
-                MatcherSample matcherSample = matcherSamples.get(i);
-                MatcherCandidate matcherCandidate = matcherSequence.get(i);
-                Measurement measurement = measurementMap.get(matcherSample.id());
+            if (matcherSamples != null && matcherSequence != null) {
+                LOGGER.info("TrackID -> " + track.getId()
+                        + ", Measurements -> " + measurementMap.size()
+                        + ", MatcherSamples -> " + matcherSamples.size());
+                for (int i = 0, size = matcherSamples.size(); i < size; i++) {
+                    MatcherSample matcherSample = matcherSamples.get(i);
+                    MatcherCandidate matcherCandidate = matcherSequence.get(i);
+                    Measurement measurement = measurementMap.get(matcherSample.id());
 
-                BaseRoad edge = matcherCandidate.point().edge().base();
-                Long osmid = edge.refid();
+                    BaseRoad edge = matcherCandidate.point().edge().base();
+                    Long osmid = edge.refid();
 
-                RoadSegment roadSegment = result.get(osmid);
-                if (roadSegment == null) {
-                    LineString waygeometry = (LineString) wayFetcher.fetchOSMWayGeometry(osmid);
-                    roadSegment = new RoadSegment(osmid.intValue(), waygeometry);
-                    result.put(osmid, roadSegment);
+                    RoadSegment roadSegment = result.get(osmid);
+                    if (roadSegment == null) {
+                        LineString waygeometry = (LineString) wayFetcher.fetchOSMWayGeometry(osmid);
+                        roadSegment = new RoadSegment(osmid.intValue(), waygeometry);
+                        result.put(osmid, roadSegment);
+                    }
+                    roadSegment.addPhenomenons(measurement.getPhenomenons());
                 }
-                roadSegment.addPhenomenons(measurement.getPhenomenons());
             }
+        } catch (NoSuchElementException e) {
+            LOGGER.error("unable to match track " + track.getId());
         }
 
         return result;

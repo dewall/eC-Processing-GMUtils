@@ -1,9 +1,11 @@
 package org.envirocar.processing.ec4geomesa.mapmatching;
 
+import com.beust.jcommander.Parameter;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import java.util.Map;
+import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.GeoMesaDataStoreModule;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
 import org.envirocar.processing.ec4geomesa.core.feature.RoadSegmentFeatureStore;
@@ -18,6 +20,10 @@ import org.opengis.feature.simple.SimpleFeature;
  * @author dewall
  */
 public class ArtisanSegmentStatisticsJob {
+
+    private static final Logger LOGGER = Logger.getLogger(ArtisanSegmentStatisticsJob.class);
+    
+    
 
     private final TrackFeatureStore trackStore;
     private final MeasurementFeatureStore measurementStore;
@@ -46,18 +52,22 @@ public class ArtisanSegmentStatisticsJob {
             String trackId = (String) next.getAttribute("TrackID");
             Track track = this.trackStore.getByID(trackId, true);
 
+            LOGGER.info("[Start] Mapmatching for trackID=" + trackId);
             Map<Long, RoadSegment> segmentStatistics = mapMatcher.computeSegmentStatistics(track);
-            segmentStatistics.entrySet()
-                    .stream()
-                    .forEach(s -> {
-                        RoadSegment existingSegment = roadsegmentStore.getByID("" + s.getKey());
-                        if (existingSegment != null) {
-                            existingSegment.addValue(s.getValue());
-                            roadsegmentStore.update(existingSegment);
-                        } else {
-                            roadsegmentStore.store(s.getValue());
-                        }
-                    });
+            if (segmentStatistics != null) {
+                segmentStatistics.entrySet()
+                        .stream()
+                        .forEach(s -> {
+                            RoadSegment existingSegment = roadsegmentStore.getByID("" + s.getKey());
+                            if (existingSegment != null) {
+                                existingSegment.addValue(s.getValue());
+                                roadsegmentStore.update(existingSegment);
+                            } else {
+                                roadsegmentStore.store(s.getValue());
+                            }
+                        });
+                LOGGER.info("[Finished] Mapmatching");
+            }
         }
     }
 

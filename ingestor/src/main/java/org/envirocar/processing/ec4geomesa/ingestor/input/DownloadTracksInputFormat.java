@@ -5,6 +5,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.hadoop.io.LongWritable;
@@ -37,15 +38,21 @@ public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
                 MRWebBasedDataIngestor.OPTION_LIMIT_DEFAULT);
         LOG.info(String.format("Getting splits for the latest %s tracks.", "" + limit));
 
-        Request request = new Request.Builder()
-                .url(ENVIROCAR_TRACKS_URL + "?limit=" + limit)
-                .build();
-
-        Response response = client.newCall(request).execute();
-        ResponseBody body = response.body();
+        // for the case that limit > 5000
+        int numRequests = ((int) limit / 5000) + 1;
 
         try {
-            List<String> trackIds = EnvirocarJSONUtils.parseTrackIds(body.string());
+            List<String> trackIds = new ArrayList<>();
+            for (int i = 1; i <= numRequests; i++) {
+                Request request = new Request.Builder()
+                        .url(ENVIROCAR_TRACKS_URL + "?limit=" + limit + "&page=" + i)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                ResponseBody body = response.body();
+
+                trackIds.addAll(EnvirocarJSONUtils.parseTrackIds(body.string()));
+            }
 
             List<InputSplit> collect = trackIds.stream()
                     .map(t -> new TextInputSplit(ENVIROCAR_TRACKS_URL + "/" + t))
