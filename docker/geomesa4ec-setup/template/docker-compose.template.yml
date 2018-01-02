@@ -1,0 +1,62 @@
+version: '3'
+services:
+  mapserver:
+    image: ec-mapmatching/mapserver-ger
+    ports:
+      - '5432:5432'
+    volumes:
+      - '__VOLUME-MAPSERVER__:/var/lib/postgresql/data'
+  geoserver:
+    image: 'quay.io/geomesa/geoserver:geomesa-1.3.2-accumulo-1.8.1'
+    ports:
+      - '9090:9090'
+  hdfs-name:
+    image: 'quay.io/geomesa/hdfs:geomesa-1.3.2-accumulo-1.8.1'
+    command: name
+    environment:
+      HADOOP_MASTER_ADDRESS: hdfs-name
+    ports:
+      - '50070:50070'
+  hdfs-data:
+    image: 'quay.io/geomesa/hdfs:geomesa-1.3.2-accumulo-1.8.1'
+    command: data
+    environment:
+      HADOOP_MASTER_ADDRESS: hdfs-name
+    depends_on:
+      - hdfs-name
+    volumes:
+      - '__VOLUME-HDFS__:/var/lib/postgresql/data'
+  zookeeper:
+    image: 'quay.io/geomesa/zookeeper:latest'
+    ports:
+      - '2181:2181'
+  accumulo-master:
+    image: 'quay.io/geomesa/accumulo-geomesa:geomesa-1.3.2-accumulo-1.8.1'
+    command: master --auto-init
+    environment:
+      HADOOP_MASTER_ADDRESS: hdfs-name
+      ZOOKEEPERS: zookeeper
+      ACCUMULO_PASSWORD: pass
+    depends_on:
+      - zookeeper
+  accumulo-monitor:
+    image: 'quay.io/geomesa/accumulo-geomesa:geomesa-1.3.2-accumulo-1.8.1'
+    command: monitor
+    environment:
+      HADOOP_MASTER_ADDRESS: hdfs-name
+      ZOOKEEPERS: zookeeper
+    ports:
+      - '9995:9995'
+      - '50095:50095'
+    depends_on:
+      - zookeeper
+      - accumulo-master
+  accumulo-tserver:
+    image: 'quay.io/geomesa/accumulo-geomesa:geomesa-1.3.2-accumulo-1.8.1'
+    command: tserver
+    environment:
+      HADOOP_MASTER_ADDRESS: hdfs-name
+      ZOOKEEPERS: zookeeper
+    depends_on:
+      - zookeeper
+      - accumulo-master
