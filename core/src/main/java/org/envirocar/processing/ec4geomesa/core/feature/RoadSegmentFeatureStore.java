@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.LineString;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -31,13 +32,19 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
             "OSMID:Integer",
             "*geom:LineString:srid=4326"
     );
+    private static final Map<String, String> phenomenonToAttribute = new HashMap<>();
+    private static final Map<String, String> attributeToPhenomenon = new HashMap<>();
 
     static {
         MeasurementFeatureStore.PHENOMENONS.stream().
                 forEach((phenomenon) -> {
-                    FEATURE_ATTRIBUTES.add("sum" + phenomenon + ":Double");
-                    FEATURE_ATTRIBUTES.add("avg" + phenomenon + ":Double");
-                    FEATURE_ATTRIBUTES.add("num" + phenomenon + ":Integer");
+                    String attribute = phenomenon.replace(" ", "");
+                    phenomenonToAttribute.put(phenomenon, attribute);
+                    attributeToPhenomenon.put(attribute, phenomenon);
+
+                    FEATURE_ATTRIBUTES.add(sumKey(attribute) + ":Double");
+                    FEATURE_ATTRIBUTES.add(avgKey(attribute) + ":Double");
+                    FEATURE_ATTRIBUTES.add(numKey(attribute) + ":Integer");
                 });
     }
 
@@ -81,7 +88,7 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
                         .entrySet()
                         .stream()
                         .forEach(c -> {
-                            keys.add("avg" + c.getKey());
+                            keys.add(avgKey(c.getKey()));
                             values.add(c.getValue());
                         });
 
@@ -89,7 +96,7 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
                         .entrySet()
                         .stream()
                         .forEach(c -> {
-                            keys.add("sum" + c.getKey());
+                            keys.add(sumKey(c.getKey()));
                             values.add(c.getValue());
                         });
 
@@ -97,7 +104,8 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
                         .entrySet()
                         .stream()
                         .forEach(c -> {
-                            keys.add("num" + c.getKey());
+
+                            keys.add(numKey(c.getKey()));
                             values.add(c.getValue());
                         });
 
@@ -115,7 +123,7 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
             LOGGER.error(String.format("Error while rolling back or closing transaction while updating OSM segment %s",
                     segment.getOsmId()), e);
         }
-    }   
+    }
 
     @Override
     protected SimpleFeature createFeatureFromEntity(RoadSegment t) {
@@ -125,17 +133,17 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
 
         Map<String, Double> sumValues = t.getSummedValues();
         for (Map.Entry<String, Double> phenomenon : sumValues.entrySet()) {
-            sf.setAttribute("sum" + phenomenon.getKey(), phenomenon.getValue());
+            sf.setAttribute(sumKey(phenomenon.getKey()), phenomenon.getValue());
         }
 
         Map<String, Double> avgValues = t.getAvgValues();
         for (Map.Entry<String, Double> phenomenon : avgValues.entrySet()) {
-            sf.setAttribute("avg" + phenomenon.getKey(), phenomenon.getValue());
+            sf.setAttribute(avgKey(phenomenon.getKey()), phenomenon.getValue());
         }
 
         Map<String, Integer> numValues = t.getNumValues();
         for (Map.Entry<String, Integer> phenomenon : numValues.entrySet()) {
-            sf.setAttribute("num" + phenomenon.getKey(), phenomenon.getValue());
+            sf.setAttribute(numKey(phenomenon.getKey()), phenomenon.getValue());
         }
 
         return sf;
@@ -148,10 +156,10 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
         RoadSegment result = new RoadSegment(osmid, lineString);
 
         for (String phenomenon : MeasurementFeatureStore.PHENOMENONS) {
-            if (sf.getAttributes().contains(("sum" + phenomenon).replace(" ", ""))) {
-                double sumValue = (double) sf.getAttribute(("sum" + phenomenon).replace(" ", ""));
-                double avgValue = (double) sf.getAttribute(("avg" + phenomenon).replace(" ", ""));
-                int numValue = (int) sf.getAttribute(("num" + phenomenon).replace(" ", ""));
+            if (sf.getAttribute(sumKey(phenomenon)) != null) {
+                double sumValue = (double) sf.getAttribute(sumKey(phenomenon));
+                double avgValue = (double) sf.getAttribute(avgKey(phenomenon));
+                int numValue = (int) sf.getAttribute(numKey(phenomenon));
                 result.setValue(phenomenon, sumValue, avgValue, numValue);
             }
         }
@@ -159,4 +167,19 @@ public class RoadSegmentFeatureStore extends AbstractFeatureStore<RoadSegment> {
         return result;
     }
 
+    private static final String avgKey(String phenomenon) {
+        return formatKey("avg", phenomenon);
+    }
+
+    private static final String sumKey(String phenomenon) {
+        return formatKey("sum", phenomenon);
+    }
+
+    private static final String numKey(String phenomenon) {
+        return formatKey("num", phenomenon);
+    }
+
+    private static final String formatKey(String type, String phenomenon) {
+        return type + phenomenon.replaceAll("\\s", "");
+    }
 }
