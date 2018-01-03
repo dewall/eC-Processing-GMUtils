@@ -66,8 +66,8 @@ public class ArtisanSegmentStatisticsJob {
                                 roadsegmentStore.store(s.getValue());
                             }
                         });
-                LOGGER.info("[Finished] Mapmatching");
             }
+            LOGGER.info("[Finished] Mapmatching");
         }
     }
 
