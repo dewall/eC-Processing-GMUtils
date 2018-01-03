@@ -116,7 +116,7 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
 
         Map<String, Double> phenomenons = new HashMap<>();
         PHENOMENONS.forEach(p -> {
-            Object attr = sf.getAttribute(p);
+            Object attr = sf.getAttribute(key(p));
             if (attr != null) {
                 double attribute = (double) attr;
                 phenomenons.put(p, attribute);
@@ -139,6 +139,10 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
             LOG.error(String.format("Error while getting measurements for track=%s", track.getId()), ex);
         }
         return track;
+    }
+    
+    private static String key(String attribute){
+        return attribute.replaceAll("\\s", "");
     }
 
 }
