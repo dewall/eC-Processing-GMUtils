@@ -84,19 +84,23 @@ public class RoadSegment {
         this.addValue(key, value, 1);
     }
 
-    public void addValue(String key, double value, int numValues) {
-        if (this.sumValues.containsKey(key) && this.avgValues.containsKey(key) && this.numValues.containsKey(key)) {
+    public void addValue(String key, double sum, int num) {
+        if (this.sumValues.containsKey(key) && this.numValues.containsKey(key)) {
             Double sumValue = this.sumValues.get(key);
-            this.sumValues.put(key, sumValue + value);
-
             Integer numValue = this.numValues.get(key);
-            numValue += numValues;
+            double avgValue = 0;
+            
+            sumValue += sum;
+            numValue += num;
+            avgValue = sumValue / numValue;
+            
+            this.sumValues.put(key, sumValue);
+            this.avgValues.put(key, avgValue);
             this.numValues.put(key, numValue);
 
-            Double avgValue = this.avgValues.get(key);
-            this.avgValues.put(key, sumValue / numValue);
         } else {
-            this.setValue(key, value, value, numValues);
+            double avg = sum / num;
+            this.setValue(key, sum, avg, num);
         }
     }
 

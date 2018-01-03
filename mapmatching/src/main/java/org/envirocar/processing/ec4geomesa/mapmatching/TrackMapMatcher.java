@@ -44,7 +44,6 @@ public class TrackMapMatcher {
         this.factory = factory;
         this.wayFetcher = wayFetcher;
     }
-
     /**
      *
      * @param track

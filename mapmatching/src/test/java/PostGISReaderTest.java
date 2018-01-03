@@ -7,7 +7,6 @@ import org.envirocar.processing.ec4geomesa.mapmatching.MapMatcherModule;
 import org.envirocar.processing.ec4geomesa.mapmatching.OSMPostGISReader;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  *
