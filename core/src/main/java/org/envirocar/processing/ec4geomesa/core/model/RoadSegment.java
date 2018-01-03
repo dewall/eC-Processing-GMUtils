@@ -89,15 +89,12 @@ public class RoadSegment {
             Double sumValue = this.sumValues.get(key);
             Integer numValue = this.numValues.get(key);
             double avgValue = 0;
-            
+
             sumValue += sum;
             numValue += num;
             avgValue = sumValue / numValue;
-            
-            this.sumValues.put(key, sumValue);
-            this.avgValues.put(key, avgValue);
-            this.numValues.put(key, numValue);
 
+            this.setValue(key, sumValue, avgValue, numValue);
         } else {
             double avg = sum / num;
             this.setValue(key, sum, avg, num);

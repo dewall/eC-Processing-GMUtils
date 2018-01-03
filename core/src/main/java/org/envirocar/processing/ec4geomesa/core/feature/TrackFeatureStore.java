@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.model.CarSensor;
 import org.envirocar.processing.ec4geomesa.core.model.Track;
 import org.geotools.data.DataStore;
+import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -117,6 +118,17 @@ public class TrackFeatureStore extends AbstractFeatureStore<Track> {
     public SimpleFeatureCollection getAllTracks() {
         try {
             return this.datastore.getFeatureSource(getTableName()).getFeatures();
+        } catch (IOException ex) {
+            LOGGER.error("Error while querying all Tracks", ex);
+        }
+        return null;
+    }
+
+    public SimpleFeatureCollection getAllTracks(int limit) {
+        try {
+            Query query = new Query(getTableName());
+            query.setMaxFeatures(limit);
+            return this.datastore.getFeatureSource(getTableName()).getFeatures(query);
         } catch (IOException ex) {
             LOGGER.error("Error while querying all Tracks", ex);
         }
