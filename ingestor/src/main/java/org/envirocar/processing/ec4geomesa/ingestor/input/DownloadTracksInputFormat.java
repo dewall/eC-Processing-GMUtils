@@ -52,15 +52,21 @@ public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
 
         try {
             List<String> trackIds = new ArrayList<>();
-            for (int i = 1; i <= numRequests; i++) {
-                Request request = new Request.Builder()
-                        .url(ENVIROCAR_TRACKS_URL + "?limit=" + limit + "&page=" + i)
-                        .build();
 
-                Response response = client.newCall(request).execute();
-                ResponseBody body = response.body();
+            if (limit < 5000) {
+                trackIds.addAll(downloadTrackIds(limit, 1));
+            } else {
+                // only when limit > 5000
+                for (int i = 1; i < numRequests; i++) {
+                    trackIds.addAll(downloadTrackIds(limit, i));
+                }
 
-                trackIds.addAll(EnvirocarJSONUtils.parseTrackIds(body.string()));
+                int rest = limit % 5000;
+                if (rest > 0) {
+                    List<String> lastPage = downloadTrackIds(limit, numRequests);
+                    int size = lastPage.size()-1;
+                    trackIds.addAll(downloadTrackIds(limit, numRequests).subList(0, size < rest-1 ? size : rest-1));
+                }
             }
 
             int chunksize = 100;
@@ -79,6 +85,17 @@ public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
             LOGGER.error("Error while defining eC inputsplits", ex);
         }
         return null;
+    }
+
+    private List<String> downloadTrackIds(int limit, int page) throws IOException, ParseException {
+        Request request = new Request.Builder()
+                .url(ENVIROCAR_TRACKS_URL + "?limit=" + limit + "&page=" + page)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        ResponseBody body = response.body();
+
+        return EnvirocarJSONUtils.parseTrackIds(body.string());
     }
 
     @Override
