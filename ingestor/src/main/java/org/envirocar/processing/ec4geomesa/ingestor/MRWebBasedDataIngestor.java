@@ -15,6 +15,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.GeoMesaConfig;
 import org.envirocar.processing.ec4geomesa.core.GeoMesaDataStoreModule;
@@ -32,21 +34,26 @@ public class MRWebBasedDataIngestor {
 
     private static final Logger LOGGER = Logger.getLogger(MRWebBasedDataIngestor.class);
 
+    static {
+        LOGGER.getParent().addAppender(new ConsoleAppender());
+        LOGGER.setLevel(Level.INFO);
+    }
+
     public static final String OPTION_CHUNKSIZE = "chunksize";
     public static final String OPTION_LIMIT = "limit";
     public static final int OPTION_CHUNKSIZE_DEFAULT = 100;
     public static final int OPTION_LIMIT_DEFAULT = 100;
 
     public static void main(String[] args) throws Exception {
-        BasicConfigurator.configure();
+
         Options options = getCLOptions();
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(options, args);
-        
+
         // Get option values
         int limit = getLimitOptionValue(cmd);
         int chunkSize = getChunkSizeOptionValue(cmd);
-        
+
         Injector injector = Guice.createInjector(new GeoMesaDataStoreModule());
         Map<String, String> datastoreConfig = injector.getInstance(
                 Key.get(Map.class, Names.named(GeoMesaConfig.GEOMESACONFIG)));
@@ -105,9 +112,9 @@ public class MRWebBasedDataIngestor {
 
         GeoMesaOutputFormat.configureDataStore(job, datastoreConfig);
 
+        LOGGER.info("Submitting Ingestion MR-Job for enviroCar Tracks.");
         job.submit();
 
-        LOGGER.info("Submitted Ingestion MR-Job for enviroCar Tracks.");
         if (!job.waitForCompletion(true)) {
             throw new Exception("Job execution failed...");
         }
