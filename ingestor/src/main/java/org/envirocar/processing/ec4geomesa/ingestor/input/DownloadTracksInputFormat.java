@@ -45,6 +45,9 @@ public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
     public List<InputSplit> getSplits(JobContext jc) throws IOException, InterruptedException {
         int limit = jc.getConfiguration().getInt(MRWebBasedDataIngestor.OPTION_LIMIT,
                 MRWebBasedDataIngestor.OPTION_LIMIT_DEFAULT);
+        int chunksize = jc.getConfiguration().getInt(MRWebBasedDataIngestor.OPTION_CHUNKSIZE,
+                MRWebBasedDataIngestor.OPTION_CHUNKSIZE_DEFAULT);
+        
         LOGGER.info(String.format("Getting splits for the latest %s tracks.", "" + limit));
 
         // for the case that limit > 5000
@@ -69,7 +72,6 @@ public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
                 }
             }
 
-            int chunksize = 100;
             AtomicInteger counter = new AtomicInteger();
             List<InputSplit> collect = trackIds.stream()
                     .map(t -> ENVIROCAR_TRACKS_URL + "/" + t)
