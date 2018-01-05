@@ -22,8 +22,6 @@ import org.opengis.feature.simple.SimpleFeature;
 public class ArtisanSegmentStatisticsJob {
 
     private static final Logger LOGGER = Logger.getLogger(ArtisanSegmentStatisticsJob.class);
-    
-    
 
     private final TrackFeatureStore trackStore;
     private final MeasurementFeatureStore measurementStore;
@@ -46,28 +44,29 @@ public class ArtisanSegmentStatisticsJob {
     }
 
     private void runJob() {
-        SimpleFeatureIterator features = this.trackStore.getAllTracks().features();
-        while (features.hasNext()) {
-            SimpleFeature next = features.next();
-            String trackId = (String) next.getAttribute("TrackID");
-            Track track = this.trackStore.getByID(trackId, true);
+        try (SimpleFeatureIterator features = this.trackStore.getAllTracks().features()) {
+            while (features.hasNext()) {
+                SimpleFeature next = features.next();
+                String trackId = (String) next.getAttribute("TrackID");
+                Track track = this.trackStore.getByID(trackId, true);
 
-            LOGGER.info("[Start] Mapmatching for trackID=" + trackId);
-            Map<Long, RoadSegment> segmentStatistics = mapMatcher.computeSegmentStatistics(track);
-            if (segmentStatistics != null) {
-                segmentStatistics.entrySet()
-                        .stream()
-                        .forEach(s -> {
-                            RoadSegment existingSegment = roadsegmentStore.getByID("" + s.getKey());
-                            if (existingSegment != null) {
-                                existingSegment.addValue(s.getValue());
-                                roadsegmentStore.update(existingSegment);
-                            } else {
-                                roadsegmentStore.store(s.getValue());
-                            }
-                        });
+                LOGGER.info("[Start] Mapmatching for trackID=" + trackId);
+                Map<Long, RoadSegment> segmentStatistics = mapMatcher.computeSegmentStatistics(track);
+                if (segmentStatistics != null) {
+                    segmentStatistics.entrySet()
+                            .stream()
+                            .forEach(s -> {
+                                RoadSegment existingSegment = roadsegmentStore.getByID("" + s.getKey());
+                                if (existingSegment != null) {
+                                    existingSegment.addValue(s.getValue());
+                                    roadsegmentStore.update(existingSegment);
+                                } else {
+                                    roadsegmentStore.store(s.getValue());
+                                }
+                            });
+                }
+                LOGGER.info("[Finished] Mapmatching");
             }
-            LOGGER.info("[Finished] Mapmatching");
         }
     }
 
