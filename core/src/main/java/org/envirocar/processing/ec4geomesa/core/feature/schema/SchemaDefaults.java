@@ -14,6 +14,7 @@ public interface SchemaDefaults {
     String TYPE_DATE = "Date";
     String TYPE_INTEGER = "Integer";
     String TYPE_FLOAT = "Float";
+    String TYPE_DOUBLE = "Double";
 
     String TYPE_POINT = "Point";
     String TYPE_LINESTRING = "LineString";
