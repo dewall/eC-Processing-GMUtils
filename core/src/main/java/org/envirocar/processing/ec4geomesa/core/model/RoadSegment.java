@@ -54,15 +54,15 @@ public class RoadSegment {
     }
 
     public Double getSumValue(String key) {
-        return (Double) getValue(this.sumValues, key);
+        return getValue(this.sumValues, key).doubleValue();
     }
 
     public Double getAvgValue(String key) {
-        return (Double) getValue(this.avgValues, key);
+        return getValue(this.avgValues, key).doubleValue();
     }
 
     public Integer getNumValue(String key) {
-        return (Integer) getValue(this.numValues, key);
+        return getValue(this.numValues, key).intValue();
     }
 
     public void addPhenomenons(Map<String, Double> phenomenons) {

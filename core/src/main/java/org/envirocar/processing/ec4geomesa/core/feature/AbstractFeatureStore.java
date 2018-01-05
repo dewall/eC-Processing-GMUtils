@@ -108,8 +108,9 @@ public abstract class AbstractFeatureStore<T> {
     }
 
     protected SimpleFeature fetchSingle(Filter filter) throws IOException {
-        SimpleFeatureCollection features = fetch(filter);
-        return !features.isEmpty() ? features.features().next() : null;
+        try (SimpleFeatureIterator features = fetch(filter).features()) {
+            return features.hasNext() ? features.next() : null;
+        }
     }
 
     protected SimpleFeatureCollection fetch(Filter filter) throws IOException {

@@ -76,6 +76,7 @@ public class TrackFeatureStore extends AbstractFeatureStore<Track> {
         sf.setAttribute(ATTRIB_ENDTIME, t.getEndingTime());
         sf.setAttribute(ATTRIB_LENGTH, t.getLength());
 
+        
         CarSensor s = t.getCarSensor();
         sf.setAttribute(ATTRIB_MANUFACTURER, s.getManufacturer());
         sf.setAttribute(ATTRIB_MODEL, s.getModel());
