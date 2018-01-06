@@ -16,7 +16,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.envirocar.processing.ec4geomesa.core.GeoMesaConfig;
-import org.envirocar.processing.ec4geomesa.core.GeoMesaDataStoreModule;
+import org.envirocar.processing.ec4geomesa.core.guice.GeoMesaDataStoreModule;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
 import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureStore;
 import org.envirocar.processing.ec4geomesa.ingestor.input.MRJsonInputFormat;

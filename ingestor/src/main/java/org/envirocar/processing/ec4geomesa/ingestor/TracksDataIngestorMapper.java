@@ -8,7 +8,7 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
-import org.envirocar.processing.ec4geomesa.core.GeoMesaDataStoreModule;
+import org.envirocar.processing.ec4geomesa.core.guice.GeoMesaDataStoreModule;
 import org.envirocar.processing.ec4geomesa.core.decoding.EnvirocarJSONUtils;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
 import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureStore;
