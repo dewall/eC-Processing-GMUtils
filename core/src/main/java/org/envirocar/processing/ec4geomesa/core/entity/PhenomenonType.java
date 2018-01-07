@@ -1,10 +1,10 @@
-package org.envirocar.processing.ec4geomesa.core.model;
+package org.envirocar.processing.ec4geomesa.core.entity;
 
 /**
  *
  * @author dewall
  */
-public enum Phenomenon {
+public enum PhenomenonType {
     CO2("CO2"),
     CALCULATED_MAF("Calculated MAF"),
     CONSUMPTION("Consumption"),
@@ -33,7 +33,7 @@ public enum Phenomenon {
 
     private final String readableName;
 
-    Phenomenon(String readableName) {
+    PhenomenonType(String readableName) {
         this.readableName = readableName;
     }
 
@@ -46,8 +46,8 @@ public enum Phenomenon {
         return readableName;
     }
 
-    public static Phenomenon getByReadableName(String toFind) {
-        for (Phenomenon p : values()) {
+    public static PhenomenonType getByReadableName(String toFind) {
+        for (PhenomenonType p : values()) {
             if (p.toString().equalsIgnoreCase(toFind)) {
                 return p;
             }
