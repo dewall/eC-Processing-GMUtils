@@ -6,5 +6,5 @@ package org.envirocar.processing.ec4geomesa.core.entity.wrapper.factory;
  */
 public interface FeatureFactory<T> {
 
-    public T create();
+    public T create(String id);
 }
