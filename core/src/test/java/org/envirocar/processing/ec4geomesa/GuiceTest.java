@@ -7,6 +7,7 @@ import com.google.inject.name.Names;
 import java.util.Map;
 import org.envirocar.processing.ec4geomesa.core.GeoMesaDB;
 import org.envirocar.processing.ec4geomesa.core.guice.GeoMesaDataStoreModule;
+import org.envirocar.processing.ec4geomesa.core.guice.GeoMesaPropertiesModule;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
