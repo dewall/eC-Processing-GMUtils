@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 import org.envirocar.processing.ec4geomesa.core.entity.CarSensor;
 import org.envirocar.processing.ec4geomesa.core.entity.Track;
-import org.envirocar.processing.ec4geomesa.core.model.Measurement;
+import org.envirocar.processing.ec4geomesa.core.entity.Measurement;
 import org.envirocar.processing.ec4geomesa.core.schema.TrackSchema;
 import org.opengis.feature.simple.SimpleFeature;
 

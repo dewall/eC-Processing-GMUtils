@@ -4,7 +4,7 @@ import com.vividsolutions.jts.geom.LineString;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.envirocar.processing.ec4geomesa.core.model.Measurement;
+import org.envirocar.processing.ec4geomesa.core.entity.Measurement;
 
 /**
  *

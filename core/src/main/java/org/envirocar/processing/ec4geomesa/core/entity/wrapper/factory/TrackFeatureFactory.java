@@ -2,6 +2,7 @@ package org.envirocar.processing.ec4geomesa.core.entity.wrapper.factory;
 
 import com.google.common.base.Joiner;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import org.envirocar.processing.ec4geomesa.core.entity.Track;
 import org.envirocar.processing.ec4geomesa.core.entity.wrapper.TrackWrapper;
 import org.envirocar.processing.ec4geomesa.core.schema.TrackSchema;
@@ -15,11 +16,16 @@ import org.opengis.feature.simple.SimpleFeatureType;
  *
  * @author dewall
  */
-public class TrackFeatureFactory implements FeatureFactory<Track>, TrackSchema {
+public class TrackFeatureFactory implements Provider<Track>, TrackSchema {
 
     private final SimpleFeatureType trackType;
     private final SimpleFeatureBuilder featureBuilder;
 
+    /**
+     * Constructor.
+     *
+     * @throws SchemaException
+     */
     @Inject
     public TrackFeatureFactory() throws SchemaException {
         this.trackType = DataUtilities.createType(TABLE_NAME,
@@ -31,7 +37,7 @@ public class TrackFeatureFactory implements FeatureFactory<Track>, TrackSchema {
     }
 
     @Override
-    public Track create(String id) {
-        return new TrackWrapper(featureBuilder.buildFeature(id));
+    public Track get() {
+        return new TrackWrapper(featureBuilder.buildFeature(null));
     }
 }
