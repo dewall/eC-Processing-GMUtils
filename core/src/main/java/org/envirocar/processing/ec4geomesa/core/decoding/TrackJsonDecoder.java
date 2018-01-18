@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
-import static org.envirocar.processing.ec4geomesa.core.decoding.JSONConstants.EC_PROPERTIES_ID;
-import static org.envirocar.processing.ec4geomesa.core.decoding.JSONConstants.KEY_PROPERTIES;
+import static org.envirocar.processing.ec4geomesa.core.decoding.EnviroCarJSONConstants.EC_PROPERTIES_ID;
+import static org.envirocar.processing.ec4geomesa.core.decoding.EnviroCarJSONConstants.KEY_PROPERTIES;
 import org.envirocar.processing.ec4geomesa.core.entity.CarSensor;
 import org.envirocar.processing.ec4geomesa.core.entity.Measurement;
 import org.envirocar.processing.ec4geomesa.core.entity.PhenomenonType;
@@ -34,7 +34,7 @@ import org.json.simple.parser.ParseException;
  *
  * @author dewall
  */
-public class TrackJsonDecoder implements JSONConstants {
+public class TrackJsonDecoder implements EnviroCarJSONConstants {
 
     private static final Logger LOG = Logger.getLogger(TrackJsonDecoder.class);
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
@@ -62,6 +62,10 @@ public class TrackJsonDecoder implements JSONConstants {
         this.trackProvider = trackProvider;
         this.geometryFactory = geometryFactory;
         this.measurmentProvider = measurementProvider;
+    }
+
+    public Track parseJson(String track) throws Exception {
+        return this.parseJson((JSONObject) jsonParser.parse(track));
     }
 
     public Track parseJson(JSONObject track) throws Exception {
@@ -110,20 +114,6 @@ public class TrackJsonDecoder implements JSONConstants {
         } catch (IllegalArgumentException e) {
             throw new Exception("Unable to parse track", e);
         }
-    }
-
-    public List<String> parseTrackIDs(String json) throws ParseException {
-        List<String> result = new ArrayList<>();
-        JSONObject parsedDocument = (JSONObject) jsonParser.parse(json);
-        JSONArray tracks = (JSONArray) parsedDocument.get("tracks");
-
-        tracks.forEach((t) -> {
-            JSONObject track = (JSONObject) t;
-            String trackId = (String) track.get(EC_PROPERTIES_ID);
-            result.add(trackId);
-        });
-
-        return result;
     }
 
     private CarSensor readCarSensor(CarSensor result, JSONObject sensorJson) {
