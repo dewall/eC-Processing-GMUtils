@@ -7,8 +7,8 @@ import java.util.List;
 import org.envirocar.processing.ec4geomesa.core.entity.CarSensor;
 import org.envirocar.processing.ec4geomesa.core.entity.Track;
 import org.envirocar.processing.ec4geomesa.core.entity.Measurement;
-import org.envirocar.processing.ec4geomesa.core.schema.TrackSchema;
 import org.opengis.feature.simple.SimpleFeature;
+import org.envirocar.processing.ec4geomesa.core.schema.TrackConstants;
 
 /**
  *
@@ -44,17 +44,17 @@ public class TrackWrapper extends AbstractFeatureWrapper implements Track {
 
     @Override
     public String getId() {
-        return (String) this.feature.getAttribute(TrackSchema.ATTRIB_TRACK_ID);
+        return (String) this.feature.getAttribute(TrackConstants.ATTRIB_TRACK_ID);
     }
 
     @Override
     public double getLength() {
-        return (double) this.feature.getAttribute(TrackSchema.ATTRIB_TRACK_LENGTH);
+        return (double) this.feature.getAttribute(TrackConstants.ATTRIB_TRACK_LENGTH);
     }
 
     @Override
     public void setLength(double length) {
-        this.feature.setAttribute(TrackSchema.ATTRIB_TRACK_LENGTH, length);
+        this.feature.setAttribute(TrackConstants.ATTRIB_TRACK_LENGTH, length);
     }
 
     @Override
@@ -84,22 +84,22 @@ public class TrackWrapper extends AbstractFeatureWrapper implements Track {
 
     @Override
     public Date getStartingTime() {
-        return (Date) this.feature.getAttribute(TrackSchema.ATTRIB_TRACK_STARTTIME);
+        return (Date) this.feature.getAttribute(TrackConstants.ATTRIB_TRACK_STARTTIME);
     }
 
     @Override
     public void setStartingTime(Date startingTime) {
-        this.feature.setAttribute(TrackSchema.ATTRIB_TRACK_STARTTIME, startingTime);
+        this.feature.setAttribute(TrackConstants.ATTRIB_TRACK_STARTTIME, startingTime);
     }
 
     @Override
     public Date getEndingTime() {
-        return (Date) this.feature.getAttribute(TrackSchema.ATTRIB_TRACK_ENDTIME);
+        return (Date) this.feature.getAttribute(TrackConstants.ATTRIB_TRACK_ENDTIME);
     }
 
     @Override
     public void setEndingTime(Date endingTime) {
-        this.feature.setAttribute(TrackSchema.ATTRIB_TRACK_ENDTIME, endingTime);
+        this.feature.setAttribute(TrackConstants.ATTRIB_TRACK_ENDTIME, endingTime);
     }
 
     @Override

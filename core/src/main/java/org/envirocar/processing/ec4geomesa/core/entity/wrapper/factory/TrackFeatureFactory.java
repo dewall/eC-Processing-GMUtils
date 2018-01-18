@@ -5,18 +5,18 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import org.envirocar.processing.ec4geomesa.core.entity.Track;
 import org.envirocar.processing.ec4geomesa.core.entity.wrapper.TrackWrapper;
-import org.envirocar.processing.ec4geomesa.core.schema.TrackSchema;
 import org.geotools.data.DataUtilities;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.envirocar.processing.ec4geomesa.core.schema.TrackConstants;
 
 /**
  *
  * @author dewall
  */
-public class TrackFeatureFactory implements Provider<Track>, TrackSchema {
+public class TrackFeatureFactory implements Provider<Track>, TrackConstants {
 
     private final SimpleFeatureType trackType;
     private final SimpleFeatureBuilder featureBuilder;

@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.Map;
 import org.envirocar.processing.ec4geomesa.core.entity.Measurement;
 import org.envirocar.processing.ec4geomesa.core.entity.PhenomenonType;
-import org.envirocar.processing.ec4geomesa.core.schema.MeasurementSchema;
 import org.opengis.feature.simple.SimpleFeature;
+import org.envirocar.processing.ec4geomesa.core.schema.MeasurementConstants;
 
 /**
  *
@@ -26,32 +26,32 @@ public class MeasurementWrapper extends AbstractFeatureWrapper implements Measur
 
     @Override
     public String getId() {
-        return (String) this.feature.getAttribute(MeasurementSchema.ATTRIB_MEASUREMENT_ID);
+        return (String) this.feature.getAttribute(MeasurementConstants.ATTRIB_MEASUREMENT_ID);
     }
 
     @Override
     public void setId(String id) {
-        this.feature.setAttribute(MeasurementSchema.ATTRIB_MEASUREMENT_ID, id);
+        this.feature.setAttribute(MeasurementConstants.ATTRIB_MEASUREMENT_ID, id);
     }
 
     @Override
     public String getTrackId() {
-        return (String) this.feature.getAttribute(MeasurementSchema.ATTRIB_TRACK_ID);
+        return (String) this.feature.getAttribute(MeasurementConstants.ATTRIB_TRACK_ID);
     }
 
     @Override
     public void setTrackId(String trackId) {
-        this.feature.setAttribute(MeasurementSchema.ATTRIB_TRACK_ID, trackId);
+        this.feature.setAttribute(MeasurementConstants.ATTRIB_TRACK_ID, trackId);
     }
 
     @Override
     public Date getTime() {
-        return (Date) this.feature.getAttribute(MeasurementSchema.ATTRIB_TIME);
+        return (Date) this.feature.getAttribute(MeasurementConstants.ATTRIB_TIME);
     }
 
     @Override
     public void setTime(Date time) {
-        this.feature.setAttribute(MeasurementSchema.ATTRIB_TIME, time);
+        this.feature.setAttribute(MeasurementConstants.ATTRIB_TIME, time);
     }
 
     @Override
