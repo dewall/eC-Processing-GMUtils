@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
-
+import org.envirocar.processing.ec4geomesa.core.guice.DataStoreModule;
 import static org.envirocar.processing.ec4geomesa.core.GeoMesaDB.GEOMESACONFIG;
 import static org.envirocar.processing.ec4geomesa.core.GeoMesaDB.PROPERTY_AUTHS;
 import static org.envirocar.processing.ec4geomesa.core.GeoMesaDB.PROPERTY_INSTANCE_ID;
@@ -22,9 +22,9 @@ import static org.envirocar.processing.ec4geomesa.core.GeoMesaDB.PROPERTY_ZOOKEE
  *
  * @author dewall
  */
-public class GeoMesaPropertiesModule extends AbstractModule {
+public class PropertiesModule extends AbstractModule {
 
-    private static final Logger LOGGER = Logger.getLogger(GeoMesaPropertiesModule.class);
+    private static final Logger LOGGER = Logger.getLogger(DataStoreModule.class);
     private static final String PROPERTIES_FILE = "/geomesa.properties";
 
     private final Map<String, String> geomesaConfig;
@@ -32,7 +32,7 @@ public class GeoMesaPropertiesModule extends AbstractModule {
     /**
      * Constructor.
      */
-    public GeoMesaPropertiesModule() {
+    public PropertiesModule() {
         this(new HashMap<>());
     }
 
@@ -41,7 +41,7 @@ public class GeoMesaPropertiesModule extends AbstractModule {
      *
      * @param config GeoMesa Configuration
      */
-    public GeoMesaPropertiesModule(Map<String, String> config) {
+    public PropertiesModule(Map<String, String> config) {
         this.geomesaConfig = config != null ? config : new HashMap<>();
     }
 
@@ -102,7 +102,7 @@ public class GeoMesaPropertiesModule extends AbstractModule {
 
     private Properties getProperties(String propertiesFile) throws IOException {
         Properties result = new Properties();
-        InputStream inputStream = GeoMesaDataStoreModule.class.getResourceAsStream(propertiesFile);
+        InputStream inputStream = DataStoreModule.class.getResourceAsStream(propertiesFile);
 
         if (inputStream != null) {
             try {
