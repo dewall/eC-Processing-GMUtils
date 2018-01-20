@@ -15,13 +15,13 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.envirocar.processing.ec4geomesa.core.GeoMesaConfig;
-import org.envirocar.processing.ec4geomesa.core.guice.GeoMesaDataStoreModule;
-import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
-import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureStore;
+import org.envirocar.processing.ec4geomesa.core.GeoMesaDB;
+import org.envirocar.processing.ec4geomesa.core.guice.DataStoreModule;
+import org.envirocar.processing.ec4geomesa.core.guice.annotations.TrackType;
 import org.envirocar.processing.ec4geomesa.ingestor.input.MRJsonInputFormat;
 import org.locationtech.geomesa.jobs.interop.mapreduce.GeoMesaOutputFormat;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  *
@@ -35,19 +35,21 @@ public class MRFileBasedDataIngestor {
         CommandLine cmd = parser.parse(options, args);
         String inputDir = cmd.getOptionValue("inputDir");
 
-        Injector injector = Guice.createInjector(new GeoMesaDataStoreModule());
+        Injector injector = Guice.createInjector(new DataStoreModule());
         Map<String, String> datastoreConfig = injector.getInstance(
-                Key.get(Map.class, Names.named(GeoMesaConfig.GEOMESACONFIG)));
+                Key.get(Map.class, Names.named(GeoMesaDB.GEOMESACONFIG)));
 
-        TrackFeatureStore trackStore = injector
-                .getInstance(TrackFeatureStore.class);
-        trackStore.createTable();
-
-        MeasurementFeatureStore measurementStore = injector
-                .getInstance(MeasurementFeatureStore.class);
-        measurementStore.createTable();
+        initializeTables(injector);
 
         runIngestor(inputDir, datastoreConfig);
+    }
+
+    private static void initializeTables(Injector injector) {
+        // transitively initialize table over aop
+        SimpleFeatureType trackFeature = injector.getInstance(
+                Key.get(SimpleFeatureType.class, TrackType.class));
+        SimpleFeatureType measurementFeature = injector.getInstance(
+                Key.get(SimpleFeatureType.class, TrackType.class));
     }
 
     private static Options getCLOptions() {

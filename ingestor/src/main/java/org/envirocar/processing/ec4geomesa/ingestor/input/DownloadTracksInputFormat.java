@@ -20,9 +20,12 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.envirocar.processing.ec4geomesa.core.decoding.EnvirocarJSONUtils;
-import org.envirocar.processing.ec4geomesa.ingestor.MRWebBasedDataIngestor;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.envirocar.processing.ec4geomesa.ingestor.MRWebBasedDataIngestor;
+import org.envirocar.processing.ec4geomesa.core.decoding.EnviroCarJSONConstants;
 
 /**
  *
@@ -47,7 +50,7 @@ public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
                 MRWebBasedDataIngestor.OPTION_LIMIT_DEFAULT);
         int chunksize = jc.getConfiguration().getInt(MRWebBasedDataIngestor.OPTION_CHUNKSIZE,
                 MRWebBasedDataIngestor.OPTION_CHUNKSIZE_DEFAULT);
-        
+
         LOGGER.info(String.format("Getting splits for the latest %s tracks.", "" + limit));
 
         // for the case that limit > 5000
@@ -67,8 +70,8 @@ public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
                 int rest = limit % 5000;
                 if (rest > 0) {
                     List<String> lastPage = downloadTrackIds(limit, numRequests);
-                    int size = lastPage.size()-1;
-                    trackIds.addAll(downloadTrackIds(limit, numRequests).subList(0, size < rest-1 ? size : rest-1));
+                    int size = lastPage.size() - 1;
+                    trackIds.addAll(downloadTrackIds(limit, numRequests).subList(0, size < rest - 1 ? size : rest - 1));
                 }
             }
 
@@ -97,7 +100,22 @@ public class DownloadTracksInputFormat extends InputFormat<LongWritable, Text> {
         Response response = client.newCall(request).execute();
         ResponseBody body = response.body();
 
-        return EnvirocarJSONUtils.parseTrackIds(body.string());
+        return this.parseTrackIDs(body.string());
+    }
+
+    private List<String> parseTrackIDs(String json) throws ParseException {
+        JSONParser jsonParser = new JSONParser();
+        JSONObject parsedDocument = (JSONObject) jsonParser.parse(json);
+        JSONArray tracks = (JSONArray) parsedDocument.get(EnviroCarJSONConstants.EC_TRACKS);
+
+        List<String> result = new ArrayList<>();
+        tracks.forEach((t) -> {
+            JSONObject track = (JSONObject) t;
+            String trackId = (String) track.get(EnviroCarJSONConstants.EC_PROPERTIES_ID);
+            result.add(trackId);
+        });
+
+        return result;
     }
 
     @Override

@@ -14,17 +14,16 @@ import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.envirocar.processing.ec4geomesa.core.GeoMesaConfig;
-import org.envirocar.processing.ec4geomesa.core.guice.GeoMesaDataStoreModule;
-import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
-import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureStore;
+import org.envirocar.processing.ec4geomesa.core.GeoMesaDB;
+import org.envirocar.processing.ec4geomesa.core.guice.DataStoreModule;
+import org.envirocar.processing.ec4geomesa.core.guice.annotations.TrackType;
 import org.envirocar.processing.ec4geomesa.ingestor.input.DownloadTracksInputFormat;
 import org.locationtech.geomesa.jobs.interop.mapreduce.GeoMesaOutputFormat;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  *
@@ -45,7 +44,6 @@ public class MRWebBasedDataIngestor {
     public static final int OPTION_LIMIT_DEFAULT = 100;
 
     public static void main(String[] args) throws Exception {
-
         Options options = getCLOptions();
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(options, args);
@@ -54,19 +52,21 @@ public class MRWebBasedDataIngestor {
         int limit = getLimitOptionValue(cmd);
         int chunkSize = getChunkSizeOptionValue(cmd);
 
-        Injector injector = Guice.createInjector(new GeoMesaDataStoreModule());
+        Injector injector = Guice.createInjector(new DataStoreModule());
         Map<String, String> datastoreConfig = injector.getInstance(
-                Key.get(Map.class, Names.named(GeoMesaConfig.GEOMESACONFIG)));
+                Key.get(Map.class, Names.named(GeoMesaDB.GEOMESACONFIG)));
 
-        TrackFeatureStore trackStore = injector
-                .getInstance(TrackFeatureStore.class);
-        trackStore.createTable();
-
-        MeasurementFeatureStore measurementStore = injector
-                .getInstance(MeasurementFeatureStore.class);
-        measurementStore.createTable();
+        initializeTables(injector);
 
         runIngestor(limit, chunkSize, datastoreConfig);
+    }
+
+    private static void initializeTables(Injector injector) {
+        // transitively initialize table over aop
+        SimpleFeatureType trackFeature = injector.getInstance(
+                Key.get(SimpleFeatureType.class, TrackType.class));
+        SimpleFeatureType measurementFeature = injector.getInstance(
+                Key.get(SimpleFeatureType.class, TrackType.class));
     }
 
     private static Options getCLOptions() {

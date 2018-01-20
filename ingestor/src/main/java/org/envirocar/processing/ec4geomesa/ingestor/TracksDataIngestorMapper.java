@@ -8,11 +8,10 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
-import org.envirocar.processing.ec4geomesa.core.guice.GeoMesaDataStoreModule;
-import org.envirocar.processing.ec4geomesa.core.decoding.EnvirocarJSONUtils;
-import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
-import org.envirocar.processing.ec4geomesa.core.feature.TrackFeatureStore;
-import org.envirocar.processing.ec4geomesa.core.model.Track;
+import org.envirocar.processing.ec4geomesa.core.decoding.TrackJsonDecoder;
+import org.envirocar.processing.ec4geomesa.core.entity.Track;
+import org.envirocar.processing.ec4geomesa.core.entity.wrapper.AbstractFeatureWrapper;
+import org.envirocar.processing.ec4geomesa.core.guice.DataStoreModule;
 import org.json.simple.parser.ParseException;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -27,15 +26,13 @@ public class TracksDataIngestorMapper extends Mapper<LongWritable, Text, Text, S
     @Inject
     private GeometryFactory geometryFactory;
     @Inject
-    private TrackFeatureStore trackProfile;
-    @Inject
-    private MeasurementFeatureStore measurementProfile;
+    private TrackJsonDecoder trackDecoder;
 
     @Override
     protected void setup(Context context) throws IOException,
             InterruptedException {
         super.setup(context);
-        Guice.createInjector(new GeoMesaDataStoreModule())
+        Guice.createInjector(new DataStoreModule())
                 .injectMembers(this);
     }
 
@@ -44,18 +41,16 @@ public class TracksDataIngestorMapper extends Mapper<LongWritable, Text, Text, S
             throws IOException, InterruptedException {
 
         try {
-            Track track = EnvirocarJSONUtils.parseTrack(value.toString());
-            SimpleFeature trackFeature = trackProfile.createFeatureFromEntity(track);
-            if (track != null && track.isValid() && trackFeature != null) {
-                context.write(new Text(), trackFeature);
+            Track track = trackDecoder.parseJson(value.toString());
+            if (track != null && track.isValid()) {
+                context.write(new Text(), ((AbstractFeatureWrapper) track).getFeature());
 
-                track.getMeasurements()
+                track.getMeasurements() 
                         .stream()
                         .filter(m -> m.isValid())
-                        .map(m -> measurementProfile.createFeatureFromEntity(m))
                         .forEach(m -> {
                             try {
-                                context.write(new Text(), m);
+                                context.write(new Text(), ((AbstractFeatureWrapper) m).getFeature());
                             } catch (IOException | InterruptedException e) {
                                 LOG.error("Error while creating measurement", e);
                             }
