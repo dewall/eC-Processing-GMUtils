@@ -1,8 +1,8 @@
-package org.envirocar.processing.ec4geomesa.core.entity.wrapper;
+package org.envirocar.processing.ec4geomesa.core.feature.wrapper;
 
 import org.envirocar.processing.ec4geomesa.core.entity.CarSensor;
 import org.opengis.feature.simple.SimpleFeature;
-import org.envirocar.processing.ec4geomesa.core.schema.TrackConstants;
+import org.envirocar.processing.ec4geomesa.core.feature.schema.TrackConstants;
 
 /**
  *

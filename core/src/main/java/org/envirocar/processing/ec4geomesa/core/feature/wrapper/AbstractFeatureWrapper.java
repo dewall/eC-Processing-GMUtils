@@ -1,4 +1,4 @@
-package org.envirocar.processing.ec4geomesa.core.entity.wrapper;
+package org.envirocar.processing.ec4geomesa.core.feature.wrapper;
 
 import org.opengis.feature.simple.SimpleFeature;
 

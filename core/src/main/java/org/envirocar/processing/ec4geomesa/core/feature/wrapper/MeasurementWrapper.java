@@ -1,4 +1,4 @@
-package org.envirocar.processing.ec4geomesa.core.entity.wrapper;
+package org.envirocar.processing.ec4geomesa.core.feature.wrapper;
 
 import com.beust.jcommander.internal.Maps;
 import com.vividsolutions.jts.geom.Point;
@@ -7,7 +7,7 @@ import java.util.Map;
 import org.envirocar.processing.ec4geomesa.core.entity.Measurement;
 import org.envirocar.processing.ec4geomesa.core.entity.PhenomenonType;
 import org.opengis.feature.simple.SimpleFeature;
-import org.envirocar.processing.ec4geomesa.core.schema.MeasurementConstants;
+import org.envirocar.processing.ec4geomesa.core.feature.schema.MeasurementConstants;
 
 /**
  *
