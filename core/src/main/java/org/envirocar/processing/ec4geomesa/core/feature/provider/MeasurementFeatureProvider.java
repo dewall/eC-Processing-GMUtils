@@ -1,24 +1,21 @@
-package org.envirocar.processing.ec4geomesa.core.entity.wrapper.factory;
+package org.envirocar.processing.ec4geomesa.core.feature.provider;
 
-import com.google.common.base.Joiner;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import org.envirocar.processing.ec4geomesa.core.entity.Measurement;
-import org.envirocar.processing.ec4geomesa.core.entity.wrapper.MeasurementWrapper;
-import org.geotools.data.DataUtilities;
+import org.envirocar.processing.ec4geomesa.core.feature.wrapper.MeasurementWrapper;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.envirocar.processing.ec4geomesa.core.schema.MeasurementConstants;
+import org.envirocar.processing.ec4geomesa.core.feature.schema.MeasurementConstants;
+import org.envirocar.processing.ec4geomesa.core.guice.annotations.MeasurementType;
 
 /**
  *
  * @author dewall
  */
-public class MeasurementFeatureFactory implements Provider<Measurement>, MeasurementConstants {
+public class MeasurementFeatureProvider implements Provider<Measurement>, MeasurementConstants {
 
-    private final SimpleFeatureType measurementType;
     private final SimpleFeatureBuilder featureBuilder;
 
     /**
@@ -27,12 +24,7 @@ public class MeasurementFeatureFactory implements Provider<Measurement>, Measure
      * @throws SchemaException
      */
     @Inject
-    public MeasurementFeatureFactory() throws SchemaException {
-        this.measurementType = DataUtilities.createType(TABLE_NAME,
-                Joiner.on(",").join(SCHEMA));
-        this.measurementType.getUserData()
-                .put(SimpleFeatureTypes.DEFAULT_DATE_KEY, ATTRIB_TIME);
-
+    public MeasurementFeatureProvider(@MeasurementType SimpleFeatureType measurementType) throws SchemaException {
         this.featureBuilder = new SimpleFeatureBuilder(measurementType);
     }
 
