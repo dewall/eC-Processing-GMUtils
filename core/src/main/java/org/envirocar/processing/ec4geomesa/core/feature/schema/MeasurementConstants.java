@@ -1,13 +1,13 @@
 package org.envirocar.processing.ec4geomesa.core.feature.schema;
 
 import java.util.ArrayList;
-import org.envirocar.processing.ec4geomesa.core.model.Phenomenon;
+import org.envirocar.processing.ec4geomesa.core.entity.PhenomenonType;
 
 /**
  *
  * @author dewall
  */
-public interface MeasurementSchema extends SchemaDefaults {
+public interface MeasurementConstants extends SchemaDefaults {
 
     String TABLE_NAME = "measurements";
 
@@ -21,7 +21,7 @@ public interface MeasurementSchema extends SchemaDefaults {
             add(ATTRIB_TRACK_ID + ":" + TYPE_STRING);
             add(ATTRIB_TIME + ":" + TYPE_DATE);
 
-            for (Phenomenon p : Phenomenon.values()) {
+            for (PhenomenonType p : PhenomenonType.values()) {
                 add(p.name() + ":" + TYPE_DOUBLE);
             }
 

@@ -17,7 +17,7 @@ import org.envirocar.processing.ec4geomesa.core.guice.annotations.TrackType;
  *
  * @author dewall
  */
-public class TrackFeatureFactoryProvider implements Provider<Track>, TrackConstants {
+public class TrackFeatureProvider implements Provider<Track>, TrackConstants {
 
     private final SimpleFeatureBuilder featureBuilder;
 
@@ -28,7 +28,7 @@ public class TrackFeatureFactoryProvider implements Provider<Track>, TrackConsta
      * @throws SchemaException
      */
     @Inject
-    public TrackFeatureFactoryProvider(@TrackType SimpleFeatureType trackType) throws SchemaException {
+    public TrackFeatureProvider(@TrackType SimpleFeatureType trackType) throws SchemaException {
         this.featureBuilder = new SimpleFeatureBuilder(trackType);
     }
 
