@@ -6,8 +6,7 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 import java.util.Map;
 import org.envirocar.processing.ec4geomesa.core.GeoMesaDB;
-import org.envirocar.processing.ec4geomesa.core.guice.GeoMesaDataStoreModule;
-import org.envirocar.processing.ec4geomesa.core.guice.GeoMesaPropertiesModule;
+import org.envirocar.processing.ec4geomesa.core.guice.GeoMesaModule;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +21,7 @@ public class GuiceTest {
 
     @Before
     public void before() {
-        this.injector = Guice.createInjector(new GeoMesaDataStoreModule());
+        this.injector = Guice.createInjector(new GeoMesaModule());
     }
 
     @Test
