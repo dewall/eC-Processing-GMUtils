@@ -10,7 +10,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.decoding.TrackJsonDecoder;
 import org.envirocar.processing.ec4geomesa.core.entity.Track;
-import org.envirocar.processing.ec4geomesa.core.entity.wrapper.AbstractFeatureWrapper;
+import org.envirocar.processing.ec4geomesa.core.feature.wrapper.AbstractFeatureWrapper;
 import org.envirocar.processing.ec4geomesa.core.guice.DataStoreModule;
 import org.json.simple.parser.ParseException;
 import org.opengis.feature.simple.SimpleFeature;
