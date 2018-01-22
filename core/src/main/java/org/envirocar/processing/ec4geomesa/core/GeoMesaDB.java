@@ -2,14 +2,12 @@ package org.envirocar.processing.ec4geomesa.core;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 import org.apache.log4j.Logger;
-import org.envirocar.processing.ec4geomesa.core.feature.store.AbstractFeatureStore;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  *
@@ -32,22 +30,30 @@ public class GeoMesaDB {
     private final Map<String, String> config;
     private final DataStore datastore;
 
-    @Inject
-    public GeoMesaDB(@Named(GEOMESACONFIG) Map<String, String> geomesaConfig,
-            Set<AbstractFeatureStore<?>> featureStores) {
-        try {
+    /**
+     * Constructor.
+     * @param geomesaConfig 
+     */
+//    null;
+    public GeoMesaDB(Map<String, String> geomesaConfig) {
+//        try {
             this.config = geomesaConfig;
-            this.datastore = DataStoreFinder.getDataStore(geomesaConfig);
-            
-            for(AbstractFeatureStore store : featureStores){
-            }
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+            this.datastore = null;
+//            DataStoreFinder.getDataStore(geomesaConfig);
+
+//        } catch (IOException ex) {
+//            throw new RuntimeException(ex);
+//        }
     }
 
     public DataStore getDatastore() {
         return datastore;
+    }
+
+    public void createTable(SimpleFeatureType featureType) throws IOException {
+        if (datastore.getSchema(featureType.getTypeName()) == null) {
+            this.datastore.createSchema(featureType);
+        }
     }
 
 }
