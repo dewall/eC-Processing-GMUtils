@@ -5,8 +5,8 @@ import org.envirocar.processing.ec4geomesa.core.guice.annotations.TrackType;
 import com.google.inject.AbstractModule;
 import org.envirocar.processing.ec4geomesa.core.entity.Measurement;
 import org.envirocar.processing.ec4geomesa.core.entity.Track;
-import org.envirocar.processing.ec4geomesa.core.feature.factory.MeasurementFeatureFactory;
-import org.envirocar.processing.ec4geomesa.core.feature.factory.TrackFeatureFactory;
+import org.envirocar.processing.ec4geomesa.core.feature.provider.MeasurementFeatureProvider;
+import org.envirocar.processing.ec4geomesa.core.feature.provider.TrackFeatureProvider;
 import org.envirocar.processing.ec4geomesa.core.feature.provider.MeasurementFeatureTypeProvider;
 import org.envirocar.processing.ec4geomesa.core.feature.provider.TrackFeatureTypeProvider;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -28,8 +28,8 @@ public class FeatureTypesModule extends AbstractModule {
                 .toProvider(MeasurementFeatureTypeProvider.class);
 
         // factories for simplefeature wrapper
-        bind(Track.class).toProvider(TrackFeatureFactory.class);
-        bind(Measurement.class).toProvider(MeasurementFeatureFactory.class);
+        bind(Track.class).toProvider(TrackFeatureProvider.class);
+        bind(Measurement.class).toProvider(MeasurementFeatureProvider.class);
     }
 
 }

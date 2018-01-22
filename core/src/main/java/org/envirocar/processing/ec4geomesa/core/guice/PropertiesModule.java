@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
-import org.envirocar.processing.ec4geomesa.core.guice.DataStoreModule;
 import static org.envirocar.processing.ec4geomesa.core.GeoMesaDB.GEOMESACONFIG;
 import static org.envirocar.processing.ec4geomesa.core.GeoMesaDB.PROPERTY_AUTHS;
 import static org.envirocar.processing.ec4geomesa.core.GeoMesaDB.PROPERTY_INSTANCE_ID;

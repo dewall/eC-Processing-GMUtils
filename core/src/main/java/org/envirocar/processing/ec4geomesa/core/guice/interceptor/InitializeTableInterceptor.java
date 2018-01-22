@@ -1,4 +1,4 @@
-package org.envirocar.processing.ec4geomesa.core.feature.provider;
+package org.envirocar.processing.ec4geomesa.core.guice.interceptor;
 
 import com.google.inject.Inject;
 import org.aopalliance.intercept.MethodInterceptor;

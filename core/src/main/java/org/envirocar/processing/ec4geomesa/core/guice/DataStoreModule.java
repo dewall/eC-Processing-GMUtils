@@ -29,9 +29,9 @@ import static org.envirocar.processing.ec4geomesa.core.GeoMesaDB.PROPERTY_ZOOKEE
 import org.envirocar.processing.ec4geomesa.core.decoding.TrackJsonDecoder;
 import org.envirocar.processing.ec4geomesa.core.entity.Measurement;
 import org.envirocar.processing.ec4geomesa.core.entity.Track;
-import org.envirocar.processing.ec4geomesa.core.feature.factory.MeasurementFeatureFactory;
-import org.envirocar.processing.ec4geomesa.core.feature.factory.TrackFeatureFactory;
-import org.envirocar.processing.ec4geomesa.core.feature.provider.InitializeTableInterceptor;
+import org.envirocar.processing.ec4geomesa.core.feature.provider.MeasurementFeatureProvider;
+import org.envirocar.processing.ec4geomesa.core.feature.provider.TrackFeatureProvider;
+import org.envirocar.processing.ec4geomesa.core.guice.interceptor.InitializeTableInterceptor;
 import org.geotools.data.DataStore;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 
@@ -43,34 +43,9 @@ public class DataStoreModule extends AbstractModule {
 
     private static final Logger LOGGER = Logger.getLogger(DataStoreModule.class);
 
-    private final Map<String, String> geomesaConfig;
-
-    /**
-     * Constructor.
-     */
-    public DataStoreModule() {
-        this(new HashMap<>());
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param config GeoMesa Configuration
-     */
-    public DataStoreModule(Map<String, String> config) {
-        this.geomesaConfig = config != null ? config : new HashMap<>();
-    }
-
     @Override
     protected void configure() {
-//        bind(TrackJsonDecoder.class);
-
-
-//        Multibinder<AbstractFeatureStore> multibinder = Multibinder.newSetBinder(binder(), AbstractFeatureStore.class);
-//        multibinder.addBinding().to(TrackFeatureStore.class);
-//        multibinder.addBinding().to(MeasurementFeatureStore.class);
         install(new PropertiesModule());
-        install(new FeatureTypesModule());
 
         // register interceptor for creating tables based on SimpleFeatureTypes
         InitializeTableInterceptor interceptor = new InitializeTableInterceptor();
@@ -81,8 +56,8 @@ public class DataStoreModule extends AbstractModule {
     }
 
     @Provides
-    public GeoMesaDB provideGeoMesaDB() {
-        return new GeoMesaDB(geomesaConfig);
+    public GeoMesaDB provideGeoMesaDB(@Named(GeoMesaDB.GEOMESACONFIG) Map<String, String> config) {
+        return new GeoMesaDB(config);
     }
 
     @Provides
