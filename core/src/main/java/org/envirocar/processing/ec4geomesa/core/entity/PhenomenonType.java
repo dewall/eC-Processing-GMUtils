@@ -30,7 +30,10 @@ public enum PhenomenonType {
     SHORT_TERM_FUEL_TRIM_1("Short-Term Fuel Trim 1"),
     SPEED("Speed"),
     THROTTLE_POSITION("Throttle Position");
-
+    private static final String KEY_AVG = "_AVG";
+    private static final String KEY_SUM = "_SUM";
+    private static final String KEY_NUM = "_NUM";
+    
     private final String readableName;
 
     PhenomenonType(String readableName) {
@@ -44,6 +47,18 @@ public enum PhenomenonType {
     @Override
     public String toString() {
         return readableName;
+    }
+    
+    public String toAvgKey(){
+        return name() + KEY_AVG;
+    }
+    
+    public String toSumKey(){
+        return name() + KEY_SUM;
+    }
+    
+    public String toNumKey(){
+        return name() + KEY_NUM;
     }
 
     public static PhenomenonType getByReadableName(String toFind) {
