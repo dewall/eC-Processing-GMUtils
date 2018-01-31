@@ -21,6 +21,7 @@ public class MeasurementFeatureProvider implements Provider<Measurement>, Measur
     /**
      * Constructor.
      *
+     * @param measurementType
      * @throws SchemaException
      */
     @Inject
