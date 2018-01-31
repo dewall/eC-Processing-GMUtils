@@ -4,10 +4,12 @@ import org.envirocar.processing.ec4geomesa.core.guice.annotations.MeasurementTyp
 import org.envirocar.processing.ec4geomesa.core.guice.annotations.TrackType;
 import com.google.inject.AbstractModule;
 import org.envirocar.processing.ec4geomesa.core.entity.Measurement;
+import org.envirocar.processing.ec4geomesa.core.entity.RoadSegment;
 import org.envirocar.processing.ec4geomesa.core.entity.Track;
 import org.envirocar.processing.ec4geomesa.core.feature.provider.MeasurementFeatureProvider;
 import org.envirocar.processing.ec4geomesa.core.feature.provider.TrackFeatureProvider;
 import org.envirocar.processing.ec4geomesa.core.feature.provider.MeasurementFeatureTypeProvider;
+import org.envirocar.processing.ec4geomesa.core.feature.provider.RoadSegmentFeatureProvider;
 import org.envirocar.processing.ec4geomesa.core.feature.provider.TrackFeatureTypeProvider;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -30,6 +32,7 @@ public class FeatureTypesModule extends AbstractModule {
         // factories for simplefeature wrapper
         bind(Track.class).toProvider(TrackFeatureProvider.class);
         bind(Measurement.class).toProvider(MeasurementFeatureProvider.class);
+        bind(RoadSegment.class).toProvider(RoadSegmentFeatureProvider.class);
     }
 
 }
