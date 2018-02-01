@@ -7,7 +7,7 @@ import org.envirocar.processing.ec4geomesa.core.entity.PhenomenonType;
  *
  * @author dewall
  */
-public interface MeasurementConstants extends SchemaDefaults {
+public interface MeasurementSchema extends SchemaDefaults {
 
     String TABLE_NAME = "measurements";
 

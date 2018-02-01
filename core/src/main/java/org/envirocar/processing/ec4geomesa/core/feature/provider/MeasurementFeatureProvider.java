@@ -7,14 +7,14 @@ import org.envirocar.processing.ec4geomesa.core.feature.wrapper.MeasurementWrapp
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.envirocar.processing.ec4geomesa.core.feature.schema.MeasurementConstants;
 import org.envirocar.processing.ec4geomesa.core.guice.annotations.MeasurementType;
+import org.envirocar.processing.ec4geomesa.core.feature.schema.MeasurementSchema;
 
 /**
  *
  * @author dewall
  */
-public class MeasurementFeatureProvider implements Provider<Measurement>, MeasurementConstants {
+public class MeasurementFeatureProvider implements Provider<Measurement>, MeasurementSchema {
 
     private final SimpleFeatureBuilder featureBuilder;
 

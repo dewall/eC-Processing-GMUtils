@@ -6,12 +6,12 @@ import org.envirocar.processing.ec4geomesa.core.guice.DataStoreModule;
 import org.envirocar.processing.ec4geomesa.core.guice.FeatureTypesModule;
 import org.envirocar.processing.ec4geomesa.core.guice.annotations.MeasurementType;
 import org.envirocar.processing.ec4geomesa.core.guice.annotations.TrackType;
-import org.envirocar.processing.ec4geomesa.core.feature.schema.MeasurementConstants;
-import org.envirocar.processing.ec4geomesa.core.feature.schema.TrackConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.envirocar.processing.ec4geomesa.core.feature.schema.TrackSchema;
+import org.envirocar.processing.ec4geomesa.core.feature.schema.MeasurementSchema;
 
 /**
  *
@@ -34,7 +34,7 @@ public class FeatureTypesModuleTest {
     
     @Test
     public void checkTypes(){
-        Assert.assertEquals(TrackConstants.TABLE_NAME, trackType.getTypeName());
-        Assert.assertEquals(MeasurementConstants.TABLE_NAME, measurementType.getTypeName());
+        Assert.assertEquals(TrackSchema.TABLE_NAME, trackType.getTypeName());
+        Assert.assertEquals(MeasurementSchema.TABLE_NAME, measurementType.getTypeName());
     }
 }

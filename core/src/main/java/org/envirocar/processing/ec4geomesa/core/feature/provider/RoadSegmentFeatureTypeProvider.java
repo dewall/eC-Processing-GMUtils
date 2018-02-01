@@ -2,16 +2,14 @@ package org.envirocar.processing.ec4geomesa.core.feature.provider;
 
 import com.google.common.base.Joiner;
 import com.google.inject.Provider;
-import org.envirocar.processing.ec4geomesa.core.feature.schema.MeasurementConstants;
-import static org.envirocar.processing.ec4geomesa.core.feature.schema.MeasurementConstants.ATTRIB_TIME;
-import static org.envirocar.processing.ec4geomesa.core.feature.schema.MeasurementConstants.SCHEMA;
+import org.envirocar.processing.ec4geomesa.core.feature.schema.RoadSegmentSchema;
 import org.envirocar.processing.ec4geomesa.core.guice.annotations.InitializeTable;
 import org.geotools.data.DataUtilities;
 import org.geotools.feature.SchemaException;
-import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.envirocar.processing.ec4geomesa.core.feature.schema.MeasurementSchema;
 
 /**
  *
@@ -25,14 +23,11 @@ public class RoadSegmentFeatureTypeProvider implements Provider<SimpleFeatureTyp
     @InitializeTable
     public SimpleFeatureType get() {
         try {
-            SimpleFeatureType measurementType;
-            measurementType = DataUtilities.createType(
-                    MeasurementConstants.TABLE_NAME, Joiner.on(",").join(SCHEMA));
-            measurementType.getUserData()
-                    .put(SimpleFeatureTypes.DEFAULT_DATE_KEY, ATTRIB_TIME);
-            return measurementType;
+            SimpleFeatureType roadsegmentType = DataUtilities.createType(
+                    RoadSegmentSchema.TABLE_NAME, Joiner.on(",").join(RoadSegmentSchema.SCHEMA));
+            return roadsegmentType;
         } catch (SchemaException ex) {
-            LOGGER.error("Error while creating SimpleFeatureType for type " + MeasurementConstants.TABLE_NAME, ex);
+            LOGGER.error("Error while creating SimpleFeatureType for type " + MeasurementSchema.TABLE_NAME, ex);
             throw new RuntimeException();
         }
     }

@@ -7,7 +7,7 @@ import java.util.List;
  *
  * @author dewall
  */
-public interface TrackConstants extends SchemaDefaults {
+public interface TrackSchema extends SchemaDefaults {
 
     String TABLE_NAME = "tracks";
 
