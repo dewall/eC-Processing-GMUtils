@@ -14,6 +14,10 @@ import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.envirocar.processing.ec4geomesa.core.GeoMesaConfig;
 import org.envirocar.processing.ec4geomesa.core.GeoMesaDataStoreModule;
 import org.envirocar.processing.ec4geomesa.core.feature.MeasurementFeatureStore;
@@ -29,14 +33,28 @@ import org.opengis.feature.simple.SimpleFeature;
  */
 public class MRWebBasedDataIngestor {
 
+
+    private static final Logger LOGGER = Logger.getLogger(MRWebBasedDataIngestor.class);
+
+    static {
+        LOGGER.getParent().addAppender(new ConsoleAppender());
+        LOGGER.setLevel(Level.INFO);
+    }
+
+    public static final String OPTION_CHUNKSIZE = "chunksize";
     public static final String OPTION_LIMIT = "limit";
+    public static final int OPTION_CHUNKSIZE_DEFAULT = 100;
     public static final int OPTION_LIMIT_DEFAULT = 100;
 
     public static void main(String[] args) throws Exception {
+
         Options options = getCLOptions();
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = parser.parse(options, args);
+
+        // Get option values
         int limit = getLimitOptionValue(cmd);
+        int chunkSize = getChunkSizeOptionValue(cmd);
 
         Injector injector = Guice.createInjector(new GeoMesaDataStoreModule());
         Map<String, String> datastoreConfig = injector.getInstance(
@@ -50,15 +68,20 @@ public class MRWebBasedDataIngestor {
                 .getInstance(MeasurementFeatureStore.class);
         measurementStore.createTable();
 
-        runIngestor(limit, datastoreConfig);
+
+        runIngestor(limit, chunkSize, datastoreConfig);
     }
 
     private static Options getCLOptions() {
         return new Options()
                 .addOption(OptionBuilder.withArgName(OPTION_LIMIT)
                         .hasArg()
-                        .withDescription("number of tracks to ingest")
-                        .create("limit"));
+                        .withDescription("Total number of tracks to ingest")
+                        .create(OPTION_LIMIT))
+                .addOption(OptionBuilder.withArgName(OPTION_CHUNKSIZE)
+                        .hasArg()
+                        .withDescription("Chunksize for track batches to download")
+                        .create(OPTION_CHUNKSIZE));
     }
 
     private static int getLimitOptionValue(CommandLine cmd) {
@@ -66,11 +89,18 @@ public class MRWebBasedDataIngestor {
         return limitValue != null ? Integer.parseInt(limitValue) : OPTION_LIMIT_DEFAULT;
     }
 
-    private static void runIngestor(int limit, Map<String, String> datastoreConfig) throws IOException,
+
+    private static int getChunkSizeOptionValue(CommandLine cmd) {
+        String chunkValue = cmd.getOptionValue(OPTION_CHUNKSIZE);
+        return chunkValue != null ? Integer.parseInt(chunkValue) : OPTION_CHUNKSIZE_DEFAULT;
+    }
+
+    private static void runIngestor(int limit, int chunksize, Map<String, String> datastoreConfig) throws IOException,
             InterruptedException, Exception {
 
         Configuration config = new Configuration();
         config.setInt(OPTION_LIMIT, limit);
+        config.setInt(OPTION_CHUNKSIZE, chunksize);
 
         Job job = Job.getInstance(config);
         job.setJobName("GeoMesa enviroCar Ingestion");
@@ -86,6 +116,7 @@ public class MRWebBasedDataIngestor {
 
         GeoMesaOutputFormat.configureDataStore(job, datastoreConfig);
 
+        LOGGER.info("Submitting Ingestion MR-Job for enviroCar Tracks.");
         job.submit();
 
         if (!job.waitForCompletion(true)) {

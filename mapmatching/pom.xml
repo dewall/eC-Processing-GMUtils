@@ -13,7 +13,7 @@
     <name>enviroCar Processing - eC4GeoMesa (MapMatcher)</name>
     
     <properties>
-        <barefoot.version>0.1.1</barefoot.version>
+        <barefoot.version>0.1.4</barefoot.version>
     </properties>
     
     <dependencies>

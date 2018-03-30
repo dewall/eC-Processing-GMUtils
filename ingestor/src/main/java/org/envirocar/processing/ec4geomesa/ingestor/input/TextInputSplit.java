@@ -24,7 +24,11 @@ public class TextInputSplit extends InputSplit implements Writable {
     /**
      * Constructor.
      *
+<<<<<<< HEAD
      * @param url
+=======
+     * @param text  
+>>>>>>> 3b5e5bd8f0f94a1fa8b2bb20d1bbb6174065635a
      */
     public TextInputSplit(String text) {
         this.text = text;
