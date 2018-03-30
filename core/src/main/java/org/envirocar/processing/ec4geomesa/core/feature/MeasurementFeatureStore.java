@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2017 the enviroCar community
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.envirocar.processing.ec4geomesa.core.feature;
 
 import com.beust.jcommander.internal.Lists;
@@ -131,7 +116,8 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
 
         Map<String, Double> phenomenons = new HashMap<>();
         PHENOMENONS.forEach(p -> {
-            Object attr = sf.getAttribute(p);
+//            Object attr = sf.getAttribute(p);
+            Object attr = sf.getAttribute(key(p));
             if (attr != null) {
                 double attribute = (double) attr;
                 phenomenons.put(p, attribute);
@@ -156,4 +142,7 @@ public class MeasurementFeatureStore extends AbstractFeatureStore<Measurement> {
         return track;
     }
 
+    private static String key(String attribute) {
+        return attribute.replaceAll("\\s", "");
+    }
 }

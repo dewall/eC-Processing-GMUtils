@@ -1,13 +1,11 @@
 package org.envirocar.processing.ec4geomesa.core;
 
-import com.google.common.io.Closeables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
